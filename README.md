@@ -12,7 +12,16 @@ If there is an error the plugin will report via the Console.
 
 2. Now, your generated class will contains `using Google.Protobuf`. Officially Google provides NuGet package to work with generated class at https://github.com/google/protobuf/tree/master/csharp but it is for .NET 4.5. If you use Unity2017 and switch on .NET 4.5 in PlayerSettings you will have an option to use Google's official package, but if you stay with .NET 3.5 you need to use the unofficial modified package like https://github.com/emikra/protobuf3-cs.
 
-This plugin bundled the 3.5 compatible .dll extracted from aforementioned NuGet link. It is based on version 3.1.x. Please be careful if the newer `protoc` you use generate a class that does not compile, is not compatible, or compile but produces wrong behaviour with this .dll  (I use `protoc` 3.3.0, the version does not exactly match but it seems fine so far.)
+This plugin bundled the .NET 3.5 compatible .dll extracted from aforementioned NuGet link. It is based on version 3.1.x. Please be careful if the newer `protoc` you use generate a class that does not compile, is not compatible, or compile but produces wrong behaviour with this .dll  (I use `protoc` 3.3.0, the version does not exactly match but it seems fine so far.)
+
+## Installation 
+
+1. Put files in your Unity project
+2. You can access the settings in Preferences > Protobuf. Here you *need* to put a path to your `protoc` executable.
+
+![settings](https://github.com/5argon/protobuf-unity/raw/master/images/settings.png)
+
+3. As soon as you import/reimport/modify (but *not* moving) `.proto` file in your project, it will compile *only that file* to the same location as the file. If you want to temporary stop this there is a checkbox in the settings, then you can manually push the button in there if you like. Note that deleting `.proto` file will not remove its generated class.
  
 ## Prerequisites
 Requires `protoc`. This plugin does not include `protoc` command and will try to run it from your command line (via .NET `System.Diagnostics.Process.Start`). Please see https://github.com/google/protobuf and install it. Confirm with `protoc --version` in your command prompt/terminal.
@@ -31,12 +40,6 @@ For complete understanding I suggest you visit [Google's document](https://devel
 ![project](https://github.com/5argon/protobuf-unity/raw/master/images/project.png)
 
 ![code compare](https://github.com/5argon/protobuf-unity/raw/master/images/codecompare.png)
-
-## Settings
-
-You can access the settings in Preferences > Protobuf.
-
-![settings](https://github.com/5argon/protobuf-unity/raw/master/images/settings.png)
 
 ## Problems
 

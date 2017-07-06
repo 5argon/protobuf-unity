@@ -99,15 +99,22 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
 
 	static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
+        if(enabled == false)
+        {
+            return;
+        }
+
         foreach (string str in importedAssets)
         {
             CompileProtobufAssetPath(str);
         }
 
+        /*
         for (int i = 0; i < movedAssets.Length; i++)
         {
             CompileProtobufAssetPath(movedAssets[i]);
         }
+        */
 
         AssetDatabase.Refresh();
     }
@@ -138,14 +145,9 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
 
     private static void CompileProtobufSystemPath(string systemPath)
     {
-        if(enabled == false)
-        {
-            return;
-        }
 
         if (Path.GetExtension(systemPath) == ".proto")
         {
-            
             string outputPath = Path.GetDirectoryName(systemPath);
 
             const string options = " --csharp_out {0} --proto_path {1}";
