@@ -12,7 +12,8 @@ If there is an error the plugin will report via the Console.
 
 2. Now, your generated class will contains `using Google.Protobuf`. Officially Google provides NuGet package to work with generated class at https://github.com/google/protobuf/tree/master/csharp but it is for .NET 4.5. If you use Unity2017 and switch on .NET 4.5 in PlayerSettings you will have an option to use Google's official package, but if you stay with .NET 3.5 you need to use the unofficial modified package like https://github.com/emikra/protobuf3-cs.
 
-This plugin bundled the .NET 3.5 compatible .dll extracted from aforementioned NuGet link. It is based on version 3.1.x. Please be careful if the newer `protoc` you use generate a class that does not compile, is not compatible, or compile but produces wrong behaviour with this .dll  (I use `protoc` 3.3.0, the version does not exactly match but it seems fine so far.)
+I bundled the 2017/05/02 protobuf but you can check at https://www.nuget.org/packages/Google.Protobuf if there are any updates.
+
 
 ## Installation 
 
