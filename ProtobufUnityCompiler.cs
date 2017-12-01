@@ -61,52 +61,79 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
     }
 
     [PreferenceItem("Protobuf")]
-        static void PreferencesItem()
+    static void PreferencesItem()
+    {
+        EditorGUI.BeginChangeCheck();
+
+
+        enabled = EditorGUILayout.Toggle(new GUIContent("Enable Protobuf Compilation", ""), enabled);
+
+        EditorGUI.BeginDisabledGroup(!enabled);
+
+        EditorGUILayout.HelpBox(@"On Windows put the path to protoc.exe (e.g. C:\My Dir\protoc.exe), on macOS and Linux you can use ""which protoc"" to find its location. (e.g. /usr/local/bin/protoc)", MessageType.Info);
+
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("Path to protoc", GUILayout.Width(100));
+        excPath = EditorGUILayout.TextField(excPath, GUILayout.ExpandWidth(true));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.Space();
+
+        logError = EditorGUILayout.Toggle(new GUIContent("Log Error Output", "Log compilation errors from protoc command."), logError);
+
+        logStandard = EditorGUILayout.Toggle(new GUIContent("Log Standard Output", "Log compilation completion messages."), logStandard);
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button(new GUIContent("Force Compilation")))
         {
-            EditorGUI.BeginChangeCheck();
-
-
-            enabled = EditorGUILayout.Toggle(new GUIContent("Enable Protobuf Compilation", ""), enabled);
-
-            EditorGUI.BeginDisabledGroup(!enabled);
-
-            EditorGUILayout.HelpBox(@"On Windows put the path to protoc.exe (e.g. C:\My Dir\protoc.exe), on macOS and Linux you can use ""which protoc"" to find its location. (e.g. /usr/local/bin/protoc)",MessageType.Info);
-
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Path to protoc", GUILayout.Width(100));
-            excPath = EditorGUILayout.TextField(excPath,  GUILayout.ExpandWidth(true));
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.Space();
-
-            logError = EditorGUILayout.Toggle(new GUIContent("Log Error Output", "Log compilation errors from protoc command."), logError);
-
-            logStandard = EditorGUILayout.Toggle(new GUIContent("Log Standard Output", "Log compilation completion messages."), logStandard);
-
-            EditorGUILayout.Space();
-
-            if(GUILayout.Button(new GUIContent("Force Compilation")))
-            {
-                CompileAllInProject();
-            }
-
-            EditorGUI.EndDisabledGroup();
-
-            if (EditorGUI.EndChangeCheck())
-            {
-            }
+            CompileAllInProject();
         }
 
-	static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+        EditorGUI.EndDisabledGroup();
+
+        if (EditorGUI.EndChangeCheck())
+        {
+        }
+    }
+
+    static string[] AllProtoFiles
     {
-        if(enabled == false)
+        get
+        {
+            string[] protoFiles = Directory.GetFiles(Application.dataPath, "*.proto", SearchOption.AllDirectories);
+            return protoFiles;
+        }
+    }
+
+    static string[] IncludePaths 
+    {
+        get
+        {
+            string[] protoFiles = AllProtoFiles;
+
+            string[] includePaths = new string[protoFiles.Length];
+            for (int i = 0; i < protoFiles.Length; i++)
+            {
+                string protoFolder = Path.GetDirectoryName(protoFiles[i]);
+                includePaths[i] = protoFolder;
+            }
+            return includePaths;
+        }
+    }
+
+
+    static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+    {
+        if (enabled == false)
         {
             return;
         }
 
+
         foreach (string str in importedAssets)
         {
-            CompileProtobufAssetPath(str);
+            CompileProtobufAssetPath(str, IncludePaths);
         }
 
         /*
@@ -125,34 +152,46 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
         {
             UnityEngine.Debug.Log("Protobuf Unity : Compiling all .proto files in the project...");
         }
-        string[] protoFiles = Directory.GetFiles(Application.dataPath,"*.proto", SearchOption.AllDirectories);
-        foreach(string s in protoFiles)
+
+
+        foreach (string s in AllProtoFiles)
         {
             if (logStandard)
             {
                 UnityEngine.Debug.Log("Protobuf Unity : Compiling " + s);
             }
-            CompileProtobufSystemPath(s);
+            CompileProtobufSystemPath(s, IncludePaths);
         }
         AssetDatabase.Refresh();
     }
 
-    private static void CompileProtobufAssetPath(string assetPath)
+    private static void CompileProtobufAssetPath(string assetPath, string[] includePaths)
     {
-        string systemPath = Directory.GetParent(Application.dataPath) + Path.DirectorySeparatorChar.ToString() + assetPath;
-        CompileProtobufSystemPath(systemPath);
+        string protoFileSystemPath = Directory.GetParent(Application.dataPath) + Path.DirectorySeparatorChar.ToString() + assetPath;
+        CompileProtobufSystemPath(protoFileSystemPath, includePaths);
     }
 
-    private static void CompileProtobufSystemPath(string systemPath)
+    private static void CompileProtobufSystemPath(string protoFileSystemPath, string[] includePaths)
     {
 
-        if (Path.GetExtension(systemPath) == ".proto")
+        if (Path.GetExtension(protoFileSystemPath) == ".proto")
         {
-            string outputPath = Path.GetDirectoryName(systemPath);
+            string outputPath = Path.GetDirectoryName(protoFileSystemPath);
 
-            const string options = " --csharp_out {0} --proto_path {1}";
+            string options = " --csharp_out {0} ";
+            foreach (string s in includePaths)
+            {
+                options += string.Format(" --proto_path {0} ", s);
+            }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo() { FileName = excPath, Arguments = string.Format("\"{0}\"",systemPath) + string.Format(options,outputPath,outputPath)};
+            string finalArguments = string.Format("\"{0}\"", protoFileSystemPath) + string.Format(options, outputPath);
+
+            // if (logStandard)
+            // {
+            //     UnityEngine.Debug.Log("Protobuf Unity : Arguments debug : " + finalArguments);
+            // }
+
+            ProcessStartInfo startInfo = new ProcessStartInfo() { FileName = excPath, Arguments =  finalArguments};
 
             Process proc = new Process() { StartInfo = startInfo };
             proc.StartInfo.UseShellExecute = false;
@@ -164,13 +203,13 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
             string error = proc.StandardError.ReadToEnd();
             proc.WaitForExit();
 
-            if (logStandard) 
+            if (logStandard)
             {
-                if(output != "")
+                if (output != "")
                 {
                     UnityEngine.Debug.Log("Protobuf Unity : " + output);
                 }
-                UnityEngine.Debug.Log("Protobuf Unity : Compiled " + Path.GetFileName(systemPath));
+                UnityEngine.Debug.Log("Protobuf Unity : Compiled " + Path.GetFileName(protoFileSystemPath));
             }
 
             if (logError && error != "")

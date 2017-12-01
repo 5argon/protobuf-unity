@@ -16,6 +16,8 @@ On iOS, there is a problem with Apple does not allow JIT compile on runtime whic
 
 I bundled the 2017/05/02 protobuf but you can check at https://www.nuget.org/packages/Google.Protobuf if there are any updates.
 
+### Updates
+- (1/12/2017) Now include paths is not only the folder of the file that is being compiled, but all folders that has a `.proto` file in your project. Proto includes does not support `.`, `..` etc. so this way you can use an unqualified name to reference any `.proto` file in your Unity project. Split assembly is coming in 2017.3 and it uses folder hierarchy. This can help you split up your proto files.
 
 ## Installation 
 
