@@ -12,12 +12,14 @@ If there is an error the plugin will report via the Console.
 
 2. Now, your generated class will contains `using Google.Protobuf`. Officially Google provides NuGet package to work with generated class at https://github.com/google/protobuf/tree/master/csharp but it is for .NET 4.6. If you use Unity2017 and switch on .NET 4.6 in PlayerSettings you will have an option to use Google's official package, but if you stay with .NET 3.5 you need to use the unofficial modified package like https://github.com/emikra/protobuf3-cs. 
 
-On iOS, there is a problem with Apple does not allow JIT compile on runtime which prevents protobuf usage. It can be solved with `Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");` before any protobuf use, but it works only on .NET 4.6. (I tried on 3.5 and the error about JIT still comes up)
-
 I bundled the 2017/05/02 protobuf but you can check at https://www.nuget.org/packages/Google.Protobuf if there are any updates.
 
 ### Updates
 - (1/12/2017) Now include paths is not only the folder of the file that is being compiled, but all folders that has a `.proto` file in your project. Proto includes does not support `.`, `..` etc. so this way you can use an unqualified name to reference any `.proto` file in your Unity project. Split assembly is coming in 2017.3 and it uses folder hierarchy. This can help you split up your proto files.
+
+### Problem with iOS + IL2CPP
+
+Now that you can't use mono backend anymore on iOS, there is a problem that IL2CPP is not supporting `System.Reflection.Emit`. You should see the discussion in [this](https://github.com/google/protobuf/issues/644) and [this](https://github.com/google/protobuf/pull/3794) thread.
 
 ## Installation 
 
