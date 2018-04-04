@@ -48,11 +48,27 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
         }
     }
 
-    public static string excPath
+    public static string rawExcPath
     {
         get
         {
             return EditorPrefs.GetString(prefProtocExecutable, "");
+        }
+        set
+        {
+            EditorPrefs.SetString(prefProtocExecutable, value);
+        }
+    }
+
+    public static string excPath
+    {
+        get
+        {
+            string ret = EditorPrefs.GetString(prefProtocExecutable, "");
+            if (ret.StartsWith(".."))
+                return Path.Combine(Application.dataPath, ret);
+            else
+                return ret;
         }
         set
         {
@@ -74,7 +90,7 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Path to protoc", GUILayout.Width(100));
-        excPath = EditorGUILayout.TextField(excPath, GUILayout.ExpandWidth(true));
+        rawExcPath = EditorGUILayout.TextField(rawExcPath, GUILayout.ExpandWidth(true));
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.Space();
