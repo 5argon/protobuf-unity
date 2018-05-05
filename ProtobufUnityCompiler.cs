@@ -123,8 +123,10 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
     }
 
 
+    static bool anyChanges = false;
     static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
+        anyChanges = false;
         if (enabled == false)
         {
             return;
@@ -133,7 +135,10 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
 
         foreach (string str in importedAssets)
         {
-            CompileProtobufAssetPath(str, IncludePaths);
+            if(CompileProtobufAssetPath(str, IncludePaths) == true)
+            {
+                anyChanges = true;
+            }
         }
 
         /*
@@ -143,7 +148,10 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
         }
         */
 
-        AssetDatabase.Refresh();
+        if(anyChanges)
+        {
+                AssetDatabase.Refresh();
+        }
     }
 
     private static void CompileAllInProject()
@@ -165,15 +173,14 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
         AssetDatabase.Refresh();
     }
 
-    private static void CompileProtobufAssetPath(string assetPath, string[] includePaths)
+    private static bool CompileProtobufAssetPath(string assetPath, string[] includePaths)
     {
         string protoFileSystemPath = Directory.GetParent(Application.dataPath) + Path.DirectorySeparatorChar.ToString() + assetPath;
-        CompileProtobufSystemPath(protoFileSystemPath, includePaths);
+        return CompileProtobufSystemPath(protoFileSystemPath, includePaths);
     }
 
-    private static void CompileProtobufSystemPath(string protoFileSystemPath, string[] includePaths)
+    private static bool CompileProtobufSystemPath(string protoFileSystemPath, string[] includePaths)
     {
-
         if (Path.GetExtension(protoFileSystemPath) == ".proto")
         {
             string outputPath = Path.GetDirectoryName(protoFileSystemPath);
@@ -216,8 +223,9 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
             {
                 UnityEngine.Debug.LogError("Protobuf Unity : " + error);
             }
-
+            return true;
         }
+        return false;
     }
 
 
