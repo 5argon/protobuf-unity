@@ -150,7 +150,8 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
 
         if(anyChanges)
         {
-                AssetDatabase.Refresh();
+            UnityEngine.Debug.Log(nameof(ProtobufUnityCompiler));
+            AssetDatabase.Refresh();
         }
     }
 
@@ -170,6 +171,7 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
             }
             CompileProtobufSystemPath(s, IncludePaths);
         }
+        UnityEngine.Debug.Log(nameof(ProtobufUnityCompiler));
         AssetDatabase.Refresh();
     }
 
