@@ -1,0 +1,8 @@
+{
+    "name": "com.e7.protobuf-unity",
+    "author": "Sirawat Pitaksarit (5argon) - Exceed7 Experiments",
+    "displayName": "protobuf-unity",
+    "version": "0.0.1",
+    "unity": "2018.1",
+    "description": "Automatic .proto files compilation in Unity project to C# as you edit them."
+}

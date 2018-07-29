@@ -10,16 +10,26 @@ Do you want to integrate [protobuf](https://github.com/google/protobuf) as a dat
 
 If there is an error the plugin will report via the Console. 
 
-2. Now, your generated class will contains `using Google.Protobuf`. Officially Google provides NuGet package to work with generated class at https://github.com/google/protobuf/tree/master/csharp but it is for .NET 4.6. If you use Unity2017 and switch on .NET 4.6 in PlayerSettings you will have an option to use Google's official package, but if you stay with .NET 3.5 you need to use the unofficial modified package like https://github.com/emikra/protobuf3-cs. 
+2. Now, your generated class will contains `using Google.Protobuf`. Which means you must have Google.Protobuf.dll in your Unity project.
 
-I bundled the 2017/05/02 protobuf but you can check at https://www.nuget.org/packages/Google.Protobuf if there are any updates.
+- I did not bundled the protobuf C# lib with this so go check at https://www.nuget.org/packages/Google.Protobuf, press Download manually, use archive extract tools to get the .dll out from nuget package and put it in your Unity project. It contains 2 target : .NET 4.6 and .NET Standard 1.0.
+- But if you stay with .NET 3.5 you need to use the unofficial modified package like https://github.com/emikra/protobuf3-cs. 
+- The latest version (3.6.0) there is a patch note saying about some movement for this to work with .NET 3.5 and Unity (https://github.com/google/protobuf/blob/master/CHANGES.txt) I don't know if it works with 3.5 fully by now or not.
 
 ### Updates
-- (1/12/2017) Now include paths is not only the folder of the file that is being compiled, but all folders that has a `.proto` file in your project. Proto includes does not support `.`, `..` etc. so this way you can use an unqualified name to reference any `.proto` file in your Unity project. Split assembly is coming in 2017.3 and it uses folder hierarchy. This can help you split up your proto files.
+- (1/12/2017) Now include paths is not only the folder of the file that is being compiled, but all folders that has a `.proto` file in your project. Proto includes on the `.proto` file's header does not support `.`, `..` etc. so this way you can use an unqualified name to reference any `.proto` file in your Unity project. Split assembly is available in 2017.3 and it uses folder hierarchy. This can help you split up your proto files.
+- (29/07/2018) There is a `package.json` so you could use Unity Package Manager now. Google for how to do it locally and according to Unity Berlin talk we will be able to use UPM with GitHub address directly later. I am preparing for that.
 
 ### Problem with iOS + IL2CPP
 
-Now that you can't use mono backend anymore on iOS, there is a problem that IL2CPP is not supporting `System.Reflection.Emit`. You should see the discussion in [this](https://github.com/google/protobuf/issues/644) and [this](https://github.com/google/protobuf/pull/3794) thread.
+Now that you can't use mono backend anymore on iOS, there is a problem that IL2CPP is not supporting `System.Reflection.Emit`. Basically you should avoid anything that will trigger reflection as much as possible.
+
+Luckily the most of core funtions does not use reflection. The most likely you will trigger reflection is `protobufClassInstance.ToString()` (Or attempting to `Debug.Log` any of the protobuf instance.) It will then use reflection to scan figure out what is the structure of all the data just to print out pretty JSON-formatted string. To alleviate this you might override `ToString` so that it pull the data out to make a string directly from generated class file's field. I am not sure of other functions that might trigger reflection.
+
+You should see the discussion in [this](https://github.com/google/protobuf/issues/644) and [this](https://github.com/google/protobuf/pull/3794) thread. The gist of it is Unity failed to preserve some information needed for the reflection and it cause the reflection to fail at runtime.
+
+And lastly the latest protobuf (3.6.0) has something related to this issue. Please see https://github.com/google/protobuf/blob/master/CHANGES.txt
+So it is recommended to get the latest version!
 
 ## Installation 
 
