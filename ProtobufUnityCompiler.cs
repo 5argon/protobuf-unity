@@ -76,11 +76,30 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
         }
     }
 
+#if UNITY_2018_3_OR_NEWER
+    private class ProtobufUnitySettingsProvider : SettingsProvider
+    {
+        public ProtobufUnitySettingsProvider(string path, SettingsScopes scopes = SettingsScopes.Any) 
+        : base(path, scopes)
+        { }
+
+        public override void OnGUI(string searchContext)
+        {
+            ProtobufPreference();
+        }
+    }
+
+    [SettingsProvider]
+    static SettingsProvider ProtobufPreferenceSettingsProvider()
+    {
+        return new ProtobufUnitySettingsProvider("Preferences/Protobuf");
+    }
+#else
     [PreferenceItem("Protobuf")]
-    static void PreferencesItem()
+#endif
+    static void ProtobufPreference()
     {
         EditorGUI.BeginChangeCheck();
-
 
         enabled = EditorGUILayout.Toggle(new GUIContent("Enable Protobuf Compilation", ""), enabled);
 
