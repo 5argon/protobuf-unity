@@ -222,10 +222,10 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
         {
             string outputPath = Path.GetDirectoryName(protoFileSystemPath);
 
-            string options = " --csharp_out {0} ";
+            string options = " --csharp_out \"{0}\" ";
             foreach (string s in includePaths)
             {
-                options += string.Format(" --proto_path {0} ", s);
+                options += string.Format(" --proto_path \"{0}\" ", s);
             }
 
             string finalArguments = string.Format("\"{0}\"", protoFileSystemPath) + string.Format(options, outputPath);
