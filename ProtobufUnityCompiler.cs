@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -79,8 +79,8 @@ public class ProtobufUnityCompiler : AssetPostprocessor {
 #if UNITY_2018_3_OR_NEWER
     private class ProtobufUnitySettingsProvider : SettingsProvider
     {
-        public ProtobufUnitySettingsProvider(string path, SettingsScopes scopes = SettingsScopes.Any) 
-        : base(path, scopes)
+        public ProtobufUnitySettingsProvider(string path, SettingsScope scope = SettingsScope.User)
+        : base(path, scope)
         { }
 
         public override void OnGUI(string searchContext)
