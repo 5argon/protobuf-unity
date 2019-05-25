@@ -1,5 +1,5 @@
 {
-    "name": "E7.ProtobufUnity",
+    "name": "E7.ProtobufUnity.Editor",
     "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [
@@ -10,5 +10,6 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }
