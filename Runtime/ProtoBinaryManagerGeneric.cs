@@ -9,21 +9,26 @@ namespace E7.Protobuf
 {
     /// <summary>
     /// This is a manager for dealing with local save file designed from Protobuf.
-    /// It connects to your game's class loosely via type params and interface, no subclassing required.
-    /// You can use it with any protobuf generated class that is not intended as a save file, but you want to write it to the disk.
+    /// However You can use it with just about any protobuf generated class that you want to write it to the disk.
+    /// But in the documentation I will refer to your proto data as "save file".
     /// 
-    /// Subclass it and provide all `abstract` implementations.
+    /// As you know protobuf generates a C# class with `partial`, this manager connects to that loosely via type params and interface, 
+    /// no subclassing from that actual `partial` data class required. Instead you subclass a specialized manager from this `abstract` class.
+    /// 
     /// Tips : If you name your class as `LocalSave`, then you will be able to nicely type `LocalSave.Save()` or `LocalSave.Manager` and do things.
     /// 
-    /// **Active save** : an *in-memory* save *data* game is using via <see cref="Active">. That property loads a default save from disk called "main save file".
+    /// **Active save** : an *in-memory* save *data* game is using via <see cref="Active">.
+    /// <see cref="Active"> loads a default save from disk called "main save file", or use a cached one if loaded already.
     /// 
     /// **Main save file** : a save *file* stored on *disk* with name <see cref="MainFileName">.
     /// Your active save became this file via <see cref="Save">, 
     /// but you could get a <typeparamref name="PROTO"> from elsewhere and use <see cref="ApplyToActive(PROTO)"> to set it as active.
+    /// 
     /// Nowadays games are mostly single-save and autosaved, so it is convenient to keep overwriting the same file by default.
+    /// Many methods in this class was designed to deal with the active slot.
     /// </summary>
     /// <typeparam name="PROTO">The type of your protobuf generated class.</typeparam>
-    /// <typeparam name="SELF">Throw the name of your subclass itself into this type param for `static` magic <see cref="Active"> and <see cref="Manager"> to work.</typeparam>
+    /// <typeparam name="SELF">Throw the name of your manager subclass itself into this type param for `static` magic <see cref="Active"> and <see cref="Manager"> to happen.</typeparam>
     public abstract class ProtoBinaryManager<PROTO, SELF>
     where PROTO : IMessage<PROTO>, new()
     where SELF : ProtoBinaryManager<PROTO, SELF>, new()
@@ -40,6 +45,9 @@ namespace E7.Protobuf
 
         /// <summary>
         /// Default extension for files generated from this manager.
+        /// 
+        /// This maybe important when your user has a problem, then you could tell him to look for
+        /// a file with certain extension and copy that out. So having an easily identifiable helps.
         /// </summary>
         protected virtual string SaveFileExtension => ".save";
 
@@ -60,29 +68,33 @@ namespace E7.Protobuf
 
         /// <summary>
         /// Specify what to do after successfully loading each save from disk.
-        /// For example, you may try to prevent players hacking your local save file here by further checking against saved hash here.
+        /// For example, you may try to prevent players hacking your local save file by further checking against saved hash here.
         /// </summary>
         protected virtual PROTO Validation(PROTO loadedSaveData) => loadedSaveData;
 
         /// <summary>
-        /// A hard-coded password for simple encoding in <see cref="SaveDataFromStream(Stream)"> and <see cref="SaveDataToStream(PROTO)">.
+        /// A hard-coded password for simple encoding in <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)">, 
+        /// or you could also get it from somewhere non hard-coded since it is a getter property.
+        /// 
         /// Protobuf encoding is not an encryption, the bit patterns are documented [here](https://developers.google.com/protocol-buffers/docs/encoding)
         /// 
         /// If someone know you are using this utility, your save probably could be easily hacked
         /// since an IL disassembler could find your string. So at least make it funny/epic to read.
         /// 
-        /// Also you could override both <see cref="SaveDataFromStream(Stream)"> and <see cref="SaveDataToStream(PROTO)"> and provide your own algorithm.
+        /// Also you could override both <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)"> and provide your own algorithm.
         /// </summary>
         protected abstract string EncryptionPassword { get; }
 
         /// <summary>
-        /// A hard-coded password salt for simple encoding in <see cref="SaveDataFromStream(Stream)"> and <see cref="SaveDataToStream(PROTO)">.
+        /// A hard-coded password salt for simple encoding in <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)">, 
+        /// or you could also get it from somewhere non hard-coded since it is a getter property.
+        /// 
         /// Protobuf encoding is not an encryption, the bit patterns are documented [here](https://developers.google.com/protocol-buffers/docs/encoding)
         /// 
         /// If someone know you are using this utility, your save probably could be easily hacked
         /// since an IL disassembler could find your string. So at least make it funny/epic to read.
         /// 
-        /// Also you could override both <see cref="SaveDataFromStream(Stream)"> and <see cref="SaveDataToStream(PROTO)"> and provide your own algorithm.
+        /// Also you could override both <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)"> and provide your own algorithm.
         /// 
         /// Note that usually salt should be regenerated and provided together with the cipher text. The default implementation uses fixed salt
         /// without providing the salt along with the encrypted data, so it kind of defeat the purpose other than making the KDF work.
@@ -120,7 +132,7 @@ namespace E7.Protobuf
         private static PROTO active;
 
         /// <summary>
-        /// The manager gives you 1 special loaded in-memory save data slot by loading from a main save file.
+        /// The manager gives you 1 special loaded in-memory save data slot by loading from the "main save file".
         /// It automatically loads on using this property if not yet.
         /// 
         /// If you don't want a reference to this assembly everywhere you use this property,
@@ -143,7 +155,7 @@ namespace E7.Protobuf
         }
 
         /// <summary>
-        /// A quick save which save the <see cref="Active"> save data to main file.
+        /// An easiest save method, which save the <see cref="Active"> save data to main file.
         /// </summary>
         public static void Save() => Manager.Save(active, $"{Manager.MainFileName}");
 
@@ -166,19 +178,19 @@ namespace E7.Protobuf
         /// <summary>
         /// For example getting a save restore as a JSON sent from server.
         /// </summary>
-        public PROTO DecodeSaveFromBase64(string base64String) => DecodeSaveFromBytes(Convert.FromBase64String(base64String));
+        public PROTO FromBase64(string base64String) => FromBytes(Convert.FromBase64String(base64String));
 
-        public PROTO DecodeSaveFromBytes(byte[] saveBytes)
+        public PROTO FromBytes(byte[] saveBytes)
         {
             using (MemoryStream memStream = new MemoryStream(saveBytes))
             {
-                return SaveDataFromStream(memStream);
+                return FromStream(memStream);
             }
         }
 
-        public byte[] EncodeSaveToBytes(PROTO save)
+        public byte[] ToBytes(PROTO save)
         {
-            using (var memStream = SaveDataToStream(save))
+            using (var memStream = ToStream(save))
             {
                 return memStream.ToArray();
             }
@@ -187,7 +199,7 @@ namespace E7.Protobuf
         /// <summary>
         /// If you want to put the entire save in JSON this is useful.
         /// </summary>
-        public string EncodeSaveToBase64(PROTO save) => Convert.ToBase64String(EncodeSaveToBytes(save));
+        public string ToBase64(PROTO save) => Convert.ToBase64String(ToBytes(save));
 
         /// <summary>
         /// Save any save file to overwrite the main save file.
@@ -200,13 +212,13 @@ namespace E7.Protobuf
         public void Save(PROTO save, string fileNameWithoutExtension) => SaveAs(save, $"{fileNameWithoutExtension}{Manager.SaveFileExtension}");
 
         private void SaveAs(PROTO save, string fileNameWithExtension) 
-            => ProtoBinaryManager.StreamToFile(SaveDataToStream(save), SaveFolderAbsolute, fileNameWithExtension);
+            => ProtoBinaryManager.StreamToFile(ToStream(save), SaveFolderAbsolute, fileNameWithExtension);
 
         /// <summary>
         /// Contains built-in encryption and validation which you could override.
         /// You could override to something more sophisticated if you want.
         /// </summary>
-        public virtual PROTO SaveDataFromStream(Stream stream)
+        public virtual PROTO FromStream(Stream stream)
         {
             var loadedData = ProtoBinaryManager.ProtoFromStream<PROTO>(stream, key);
             var validated = Validation(loadedData);
@@ -216,7 +228,7 @@ namespace E7.Protobuf
         /// <summary>
         /// You could override to something more sophisticated if you want.
         /// </summary>
-        public virtual MemoryStream SaveDataToStream(PROTO save) => ProtoBinaryManager.ProtoToStream(save, key);
+        public virtual MemoryStream ToStream(PROTO save) => ProtoBinaryManager.ProtoToStream(save, key);
 
         /// <summary>
         /// Load and return the main save file. It's state may be behind of the current <see cref="Active"> save file.
@@ -240,7 +252,7 @@ namespace E7.Protobuf
         /// <summary>
         /// Load any save file in the <see cref="InnerSaveFolder">. Use <see cref="ApplyToActive(PROTO)"> to make the returned save data the <see cref="Active"> save.
         /// </summary>
-        public PROTO Load(string fileNameWithoutExtension) => ProtoFromFile($"{SaveFolderAbsolute}", $"{fileNameWithoutExtension}{SaveFileExtension}");
+        public PROTO Load(string fileNameWithoutExtension) => FromFile($"{SaveFolderAbsolute}", $"{fileNameWithoutExtension}{SaveFileExtension}");
 
         /// <summary>
         /// Overwrite an <see cref="Active"> save slot with an arbitrary save data.
@@ -258,7 +270,7 @@ namespace E7.Protobuf
         /// Unlike <see cref="ProtoBinaryManager.ProtoFromFile{PROTO}(byte[], string, string)">, it has some recovery options when the
         /// file is hacked or corrupted. (but the file exists, otherwise throw as normal)
         /// </summary>
-        private PROTO ProtoFromFile(string loadFolderAbsolute, string fileNameWithExtension)
+        private PROTO FromFile(string loadFolderAbsolute, string fileNameWithExtension)
         {
             string path = $"{loadFolderAbsolute}/{fileNameWithExtension}";
             try
@@ -300,7 +312,7 @@ namespace E7.Protobuf
         /// Do not include `Assets` or leading slash in the <paramref name="path">.
         /// File name don't need extension, it uses <see cref="SaveFileExtension">.
         /// </summary>
-        public PROTO LoadFromProject(string path, string name) => ProtoBinaryManager.ProtoFromProject<PROTO>(key, path, $"{name}{SaveFileExtension}");
+        public PROTO FromProject(string path, string name) => ProtoBinaryManager.ProtoFromProject<PROTO>(key, path, $"{name}{SaveFileExtension}");
 
         /// <summary>
         /// Useful in unit testing. You could have a sample of old version saves from player and test your compatibility with them.
@@ -309,7 +321,7 @@ namespace E7.Protobuf
         /// Do not include `Assets` or leading slash in the <paramref name="path">.
         /// File name don't need extension, it uses <see cref="SaveFileExtension">.
         /// </summary>
-        public void ApplyFromProjectToActive(string path, string name) => ApplyToActive(LoadFromProject(path, name));
+        public void ApplyFromProjectToActive(string path, string name) => ApplyToActive(FromProject(path, name));
 
 #endif
 
