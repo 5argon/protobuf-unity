@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+// See https://github.com/cgrushko/protobuf/commit/42220267cdef5c31b97a07128ce3a56ec1f910b4 for details.
+// In C# we can have only single-value options right now.
+
+// If using protobuf-unity by copying into the project, let this compile and you can already import it.
+
+// UPM packages is not playing well with Unity file path resolving. And `Application.dataPath` cannot get to the package.
+// So just copy the .proto file to have it compile in your project instead.
+
+extend google.protobuf.FieldOptions {
+  // Post-process a tighter accessor control to the generated field. The intention is that you will provide your own accessor in your partial class.
+  // - If normal fields, the setter is private while getter still remains public.
+  // - If repeated or map fields, the getter is private.
+  bool private = 55501;
+}
+
+extend google.protobuf.MessageOptions {
+  //It is like you apply `private` custom options to all fields in the message.
+  bool private_message = 55502;
+}

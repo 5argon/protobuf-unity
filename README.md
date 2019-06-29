@@ -1,6 +1,6 @@
 # protobuf-unity
 
-![settings](.images/settings.png)
+![settings](.Documentation/images/settings.png)
 
 Do you want to integrate [protobuf](https://github.com/google/protobuf) as a data class, game saves, message to the server, etc. in your game? Now you can put those `.proto` files directly in the project, work on it, and have the editor script in here generate the classes for you.
 
@@ -10,7 +10,7 @@ Do you want to integrate [protobuf](https://github.com/google/protobuf) as a dat
 2. Put files in your Unity project. This is also Unity Package Manager compatible. You can pull from online to your project directly.
 3. You can access the settings in Preferences > Protobuf. Here you *need* to put a path to your `protoc` executable.
 
-![settings](.images/settings.png)
+![settings](.Documentation/images/settings.png)
 
 As soon as you import/reimport/modify (but *not* moving) `.proto` file in your project, it will compile *only that file* to the same location as the file. If you want to temporary stop this there is a checkbox in the settings, then you can manually push the button in there if you like. Note that deleting `.proto` file will *not* remove its generated class.
 
@@ -27,6 +27,7 @@ As soon as you import/reimport/modify (but *not* moving) `.proto` file in your p
 ## Why Protobuf?
 
 - Smaller size, no big luggages like type information when if you used `System.Serializable` + `BinaryFormatter`.
+- You could use Unity's `ScriptableObject`, but one well-known gotchas is that Unity can't serialize `Dictionary`. Here you could use [`map<,>`](https://developers.google.com/protocol-buffers/docs/proto3#maps) in protobuf together with available protobuf types. [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) and [Oneof](https://developers.google.com/protocol-buffers/docs/proto3#oneof) could be very useful too.
 - `System.Serializable` is terrible on both forward and backward compatibility unpredictably, may affect your business badly. (e.g. you wanna change how your game's monetization works, that timed ads that was saved in the save file is now unnecessary, but because inflexibility you have to live with them forever in the code.)
 - For Unity-specific problem, just rename your `asmdef` and the serialized file is now unreadable without binder hacks because `BinaryFormatter` needs fully qualified assembly name.
 - Protobuf is flexible that it is a generic C# library, and the serialized file could potentially be read in other languages like on your game server. For more Unity-tuned serialization, you may want to check out [Odin Serializer](https://github.com/TeamSirenix/odin-serializer).
@@ -60,20 +61,10 @@ For complete understanding I suggest you visit [Google's document](https://devel
 - If you put `//` comment (or multiline) over a field or message definition, it will be transferred nicely to C# comment.
 - It is [possible to generate a C# namespace](https://developers.google.com/protocol-buffers/docs/reference/csharp-generated#structure).
 
-![project](.images/project.png)
+![project](.Documentation/images/project.png)
 
-![code compare](.images/codecompare.png)
+![code compare](.Documentation/images/codecompare.png)
 
-# Problems in generated C# code
-
-There are some problems with Protobuf-generated C# that I am not quite content with : 
-
-- The generated properties are all `public get` and `public set`, this maybe not desirable. For example your `Gem` property could be modified by everyone and that's bug-prone. You probably prefer some kind of `PurchaseWithGem(iapItem)` method in your `partial` that decreases your `Gem` and keep the setter `private`.
-- The class contains `partial`, I would like to use `partial` feature and don't want to make a completely new class as a wrapper to this protobuf-generated class. It would be easier to handle the serialization and data management. Also I don't want to redo all the protobuf-generated utility methods like `MergeFrom` or deep `Clone`.
-- Some fields in `proto` like `map` are useful as Unity couldn't even serialize `Dictionary` properly, but it is even more likely than normal fields that you don't want anyone to access this freely and add things to it. Imagine a `map<string,string>` describing friend's UID code to the string representation of `DateTime` of when they last online. It doesn't make sense to allow access to this map because `string` doesn't make sense. You want it completely `private` then write a method accessor like `RememberLastOnline(friend, dateTime)` to modify its value, and potentially call the save method to write to disk at the same time.
-- These unwanted accessors show up in your intellisense and you don't want to see them.
-
-One could utilize the [Compiler Plugin feature](https://developers.google.com/protocol-buffers/docs/reference/other#plugins), but I think it is overkill. I think I am fine with just some dumb RegEx over generated C# classes in Unity. In the preference menu, there will be several post-processing options available when it is done.
 
 # ProtoBinaryManager
 
@@ -104,6 +95,42 @@ LocalSave.Manager.BackupActive();
 LocalSave.Manager.ReloadActive();
 ```
 
-## License
+# Special post processor by custom options (WIP)
 
-As this will need Protobuf you need to follow Google's license here : https://github.com/google/protobuf/blob/master/LICENSE. For my own Unity code the license is MIT.
+There are some problems with Protobuf-generated C# code that I am not quite content with : 
+
+- The generated properties are all `public get` and `public set`, this maybe not desirable. For example your `Gem` property could be modified by everyone and that's bug-prone. You probably prefer some kind of `PurchaseWithGem(iapItem)` method in your `partial` that decreases your `Gem` and keep the setter `private`.
+- The class contains `partial`, I would like to use `partial` feature and don't want to make a completely new class as a wrapper to this protobuf-generated class. It would be easier to handle the serialization and data management. Also I don't want to redo all the protobuf-generated utility methods like `MergeFrom` or deep `Clone`.
+- Some fields in `proto` like `map` are useful as Unity couldn't even serialize `Dictionary` properly, but it is even more likely than normal fields that you don't want anyone to access this freely and add things to it. Imagine a `map<string,string>` describing friend's UID code to the string representation of `DateTime` of when they last online. It doesn't make sense to allow access to this map because `string` doesn't make sense. You want it completely `private` then write a method accessor like `RememberLastOnline(friend, dateTime)` to modify its value, and potentially call the save method to write to disk at the same time.
+- These unwanted accessors show up in your intellisense and you don't want to see them.
+
+One could utilize the [Compiler Plugin feature](https://developers.google.com/protocol-buffers/docs/reference/other#plugins), but I think it is overkill. I think I am fine with just some dumb RegEx replace over generated C# classes in Unity.
+
+The next problem is how to select some fields or message to be triggered by this post-processing. It will be by [custom options feature](https://developers.google.com/protocol-buffers/docs/proto3#custom_options). In the folder `CustomOptions`, there is a `protobuf_unity_custom_options.proto` file that extends the options to Protobuf plus its generated C# file.
+
+- If you use protobuf-unity by copying the whole thing into your project, both files will be in your `import` scope already. 
+- If you use protobuf-unity via UPM include, I don't want to deal with path resolving to the package location so `protoc` knows where the `protobuf_unity_custom_options.proto` is. A solution is just copy this `.proto` file to your project. protobuf-unity will then generate its C# file again locally in your project.
+
+You then use `import "protobuf_unity_custom_options.proto";` on the head of `.proto` file that you want to use the custom options. The generated C# file of this class of yours, will then have a reference to the C# file of `protobuf_unity_custom_options.proto` (namely `ProtobufUnityCustomOptions.cs`)
+
+Right now this custom options gives you 1 message option `private_message` and 1 field option `private`. Unfortunately I think options can't be just a flag, so they are boolean and you have to set them to `true`.
+
+```protobuf
+syntax = "proto3";
+import "enums.proto";
+import "protobuf_unity_custom_options.proto";
+
+message PlayerData {
+
+    option (private_message) = true; // Using message option
+
+    string player_id = 1;
+    string display_name = 2 [(private)=true]; // Using field option
+}
+```
+
+`private` would apply tighter accessor to only one field, `private_message` apply to all fields in the message. But yeah, I didn't work on that yet. I just want to write these documentation as I code. :P
+
+# License
+
+As this will need Protobuf you need to follow Google's license here : https://github.com/google/protobuf/blob/master/LICENSE. For my own code the license is MIT.
