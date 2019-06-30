@@ -1,6 +1,7 @@
 using Google.Protobuf;
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace E7.Protobuf
             aes.Key = key;
             aes.IV = ivRead;
 
-            //Debug.Log($"Using {string.Join(",", des.Key.Select(x => x))} {string.Join(",", des.IV.Select(x => x))}");
+            //Debug.Log($"Using {string.Join(",", aes.Key.Select(x => x))} {string.Join(",", aes.IV.Select(x => x))}");
 
             P loadedData = new P();
             using (var cryptoStream = new CryptoStream(stream, aes.CreateDecryptor(), CryptoStreamMode.Read))

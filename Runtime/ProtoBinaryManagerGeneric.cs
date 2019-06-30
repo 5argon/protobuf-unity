@@ -279,7 +279,7 @@ namespace E7.Protobuf
             }
             catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException)
             {
-                //Migration only available when finding the file but not readable.
+                //Migration only available when found the file but not readable.
 #if UNITY_EDITOR
                 Debug.LogWarning(ex);
                 Debug.LogWarning("Possible old save data or corrupt save data found, trying to migrate.");
@@ -312,7 +312,7 @@ namespace E7.Protobuf
         /// Do not include `Assets` or leading slash in the <paramref name="path">.
         /// File name don't need extension, it uses <see cref="SaveFileExtension">.
         /// </summary>
-        public PROTO FromProject(string path, string name) => ProtoBinaryManager.ProtoFromProject<PROTO>(key, path, $"{name}{SaveFileExtension}");
+        public PROTO FromProject(string path, string name) => FromFile($"{Application.dataPath}/{path}", $"{name}{SaveFileExtension}");
 
         /// <summary>
         /// Useful in unit testing. You could have a sample of old version saves from player and test your compatibility with them.

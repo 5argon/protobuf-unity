@@ -1,3 +1,5 @@
+using Google.Protobuf;
+
 namespace E7.Protobuf
 {
     /// <summary>
@@ -25,10 +27,20 @@ namespace E7.Protobuf
     /// Then you could `saveFileInstance.Currency.____`, as a way to organize common methods together.
     /// </summary>
     /// <typeparam name="PROTO">Your protobuf generated type here.</typeparam>
-    public abstract class ProtoModule<PROTO>
+    public abstract class ProtoModule<PROTO, MANAGER>
+    where PROTO : IMessage<PROTO>, new()
+    where MANAGER : ProtoBinaryManager<PROTO, MANAGER>, new()
     {
+        /// <summary>
+        /// Access and modify all of protobuf fields here. Equivalent to `this` when you were not using modules.
+        /// </summary>
         protected PROTO Proto { get; }
-        public abstract void Save();
+
+        /// <summary>
+        /// Save over the main save file.
+        /// </summary>
+        protected void Save() => ProtoBinaryManager<PROTO, MANAGER>.Manager.Save(Proto);
+
         public ProtoModule(PROTO proto)
         {
             this.Proto = proto;
