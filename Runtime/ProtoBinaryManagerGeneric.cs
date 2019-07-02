@@ -73,26 +73,28 @@ namespace E7.Protobuf
         protected virtual PROTO Validation(PROTO loadedSaveData) => loadedSaveData;
 
         /// <summary>
-        /// A hard-coded password for simple encoding in <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)">, 
-        /// or you could also get it from somewhere non hard-coded since it is a getter property.
+        /// A password for simple encoding in <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)">, 
+        /// 
+        /// This is a getter property, if your game is completely client-side you can choose your own poison, for example : 
+        /// - Hard code it (e.g. `=> "My password is easily disassembled"`)
+        /// - Load it from an another static code, which is obfuscated.
+        /// - Make unmanaged call to non-C# code or DLL and get your stuff.
         /// 
         /// Protobuf encoding is not an encryption, the bit patterns are documented [here](https://developers.google.com/protocol-buffers/docs/encoding)
-        /// 
-        /// If someone know you are using this utility, your save probably could be easily hacked
-        /// since an IL disassembler could find your string. So at least make it funny/epic to read.
         /// 
         /// Also you could override both <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)"> and provide your own algorithm.
         /// </summary>
         protected abstract string EncryptionPassword { get; }
 
         /// <summary>
-        /// A hard-coded password salt for simple encoding in <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)">, 
-        /// or you could also get it from somewhere non hard-coded since it is a getter property.
+        /// A password salt for simple encoding in <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)">, 
+        /// 
+        /// This is a getter property, if your game is completely client-side you can choose your own poison, for example : 
+        /// - Hard code it (e.g. `=> "My password is easily disassembled"`)
+        /// - Load it from an another static code, which is obfuscated.
+        /// - Make unmanaged call to non-C# code or DLL and get your stuff.
         /// 
         /// Protobuf encoding is not an encryption, the bit patterns are documented [here](https://developers.google.com/protocol-buffers/docs/encoding)
-        /// 
-        /// If someone know you are using this utility, your save probably could be easily hacked
-        /// since an IL disassembler could find your string. So at least make it funny/epic to read.
         /// 
         /// Also you could override both <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)"> and provide your own algorithm.
         /// 
@@ -155,7 +157,7 @@ namespace E7.Protobuf
         }
 
         /// <summary>
-        /// An easiest save method, which save the <see cref="Active"> save data to main file.
+        /// The easiest save method, which save the <see cref="Active"> save data to main file.
         /// </summary>
         public static void Save() => Manager.Save(active, $"{Manager.MainFileName}");
 
@@ -204,7 +206,7 @@ namespace E7.Protobuf
         /// <summary>
         /// Save any save file to overwrite the main save file.
         /// </summary>
-        public void Save(PROTO save) => SaveAs(save, $"{Manager.MainFileName}");
+        public void Save(PROTO save) => Save(save, $"{Manager.MainFileName}");
 
         /// <summary>
         /// Save any save file with custom name using the same extension your game had been using.
@@ -215,7 +217,9 @@ namespace E7.Protobuf
             => ProtoBinaryManager.StreamToFile(ToStream(save), SaveFolderAbsolute, fileNameWithExtension);
 
         /// <summary>
-        /// Contains built-in encryption and validation which you could override.
+        /// The default implementation picks up 16 bytes IV from the front of cipher text, 
+        /// use it together with a key derived from  <see cref="EncryptionPassword"> and <see cref="EncryptionSalt"> to AES decode the protobuf stream.
+        /// 
         /// You could override to something more sophisticated if you want.
         /// </summary>
         public virtual PROTO FromStream(Stream stream)
@@ -226,16 +230,19 @@ namespace E7.Protobuf
         }
 
         /// <summary>
+        /// The default implementation applies basic AES encryption with a key derived from <see cref="EncryptionPassword"> and <see cref="EncryptionSalt">,
+        /// with generated IV pasted in front of cipher text, before writing to the disk.
+        /// 
         /// You could override to something more sophisticated if you want.
         /// </summary>
         public virtual MemoryStream ToStream(PROTO save) => ProtoBinaryManager.ProtoToStream(save, key);
 
         /// <summary>
-        /// Load and return the main save file. It's state may be behind of the current <see cref="Active"> save file.
-        /// You could use this for progress comparison before overwriting, for example.
+        /// Load and return the main save file. Its state may be behind of the current <see cref="Active"> save file.
+        /// You could use this for progress comparison in the save overwriting dialog, for example.
         /// 
-        /// If there is no save file, you get a fresh save instead of an exception. This fresh save is just `new`,
-        /// however protobuf generated `OnConstruction()` `partial` method for you to add some custom logic.
+        /// If there is no save file, you get a fresh save instead of an exception. This fresh save is just `new`.
+        /// Protobuf generated `OnConstruction()` `partial` method for you to add your own custom logic, which the constructor will call into.
         /// </summary>
         public PROTO LoadMain()
         {
@@ -268,7 +275,7 @@ namespace E7.Protobuf
 
         /// <summary>
         /// Unlike <see cref="ProtoBinaryManager.ProtoFromFile{PROTO}(byte[], string, string)">, it has some recovery options when the
-        /// file is hacked or corrupted. (but the file exists, otherwise throw as normal)
+        /// file is hacked or corrupted. (but the file must exist, otherwise it will throw `FileNotFoundException` as usual)
         /// </summary>
         private PROTO FromFile(string loadFolderAbsolute, string fileNameWithExtension)
         {
@@ -307,19 +314,19 @@ namespace E7.Protobuf
 
         /// <summary>
         /// Useful in unit testing. You could have a sample of old version saves from player and test your compatibility with them.
-        /// Or just a way to setup the test for specific scenario you want to check out.
+        /// Or just a way to setup the test for specific scenario you want to check out based on preset save files.
         /// 
         /// Do not include `Assets` or leading slash in the <paramref name="path">.
-        /// File name don't need extension, it uses <see cref="SaveFileExtension">.
+        /// File name don't need extension, it uses <see cref="SaveFileExtension"> in your subclassed manager class.
         /// </summary>
         public PROTO FromProject(string path, string name) => FromFile($"{Application.dataPath}/{path}", $"{name}{SaveFileExtension}");
 
         /// <summary>
         /// Useful in unit testing. You could have a sample of old version saves from player and test your compatibility with them.
-        /// Or just a way to setup the test for specific scenario you want to check out.
+        /// Or just a way to setup the test for specific scenario you want to check out based on preset save files.
         /// 
         /// Do not include `Assets` or leading slash in the <paramref name="path">.
-        /// File name don't need extension, it uses <see cref="SaveFileExtension">.
+        /// File name don't need extension, it uses <see cref="SaveFileExtension"> in your subclassed manager class.
         /// </summary>
         public void ApplyFromProjectToActive(string path, string name) => ApplyToActive(FromProject(path, name));
 
