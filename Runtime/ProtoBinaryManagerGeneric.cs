@@ -164,13 +164,22 @@ namespace E7.Protobuf
         /// <summary>
         /// Backup the <see cref="Active"> save to a new backup file.
         /// 
-        /// There is no access point for this backup files yet. Just as a safety net to backup occassionally
+        /// You can use this as a safety net to backup occassionally
         /// and in the case that the save corrupted (by your mistake or disk failure), at least your player could 
         /// dig the backup and see if it works or not.
+        /// 
+        /// Or you could use the built-in <see cref="RestoreFromBackup"> to replace the active save memory with the backup.
         /// 
         /// TODO : Make this method backup incrementally as multiple files, with timestamp.
         /// </summary>
         public void BackupActive() => Save(active, $"{Manager.MainFileName}{Manager.BackupSuffix}");
+
+        /// <summary>
+        /// Reload from the main backup file.
+        /// 
+        /// TODO : When backup could do multiple files, this should use the most recent one.
+        /// </summary>
+        public void RestoreFromBackup() => Manager.ApplyToActive(Manager.Load($"{Manager.MainFileName}{Manager.BackupSuffix}"));
 
         /// <summary>
         /// Reload main save file into <see cref="Active"> slot, discarding all unsaved changes.
