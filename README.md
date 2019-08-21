@@ -26,6 +26,26 @@ As soon as you import/reimport/modify (but *not* moving) `.proto` file in your p
 - But if you stay with .NET 3.5 you need to use the unofficial modified package like https://github.com/emikra/protobuf3-cs. 
 - The latest version (3.6.0) there is a patch note saying about some movement for this to work with .NET 3.5 and Unity (https://github.com/google/protobuf/blob/master/CHANGES.txt) I don't know if it works with 3.5 fully by now or not.
 
+## How to use Google-made well known types
+
+Maybe you are thinking about storing time, for your daily resets, etc. Storing as C# `.ToString()` of `DateTime`/`DateTimeOffset` is not a good idea. Storing it as an integer seconds / milliseconds from Unix epoch and converting to `DateTimeOffset` later is a better idea.
+
+But instead of using generic `int32/64` which is prone to error when you look at it later what this number supposed to represent, Google already has `Timestamp` ready for use waiting in the protobuf's DLL you need to include in the Unity project (`Google.Protobuf.WellKnownTypes.___`), so you don't even have to copy Google's `.proto` of `Timestamp` into your game. (That will instead cause duplicate declaration compile error.)
+
+Google's `Timestamp` [consist of 2 number fields](https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/timestamp.proto), an `int64` for seconds elapsed since Unix epoch and an `int32` of nanoseconds in that second for extra accuracy. What's even more timesaving is that Google provided utility methods to interface with C#. (Such as `public static Timestamp FromDateTimeOffset(DateTimeOffset dateTimeOffset);`)
+
+Here's how you do it in your `.proto` file.
+
+![wellknowntypes1](.Documentation/images/wellknown1.png)
+
+`google/protobuf/` path is seemingly available for `import` from nowhere. Then you need to fully qualify it with `google.protobuf.__` since Google used `package google.protobuf;`.
+
+Resulting C# class looks like this :
+
+![wellknowntypes2](.Documentation/images/wellknown2.png)
+
+See other predefined [well-known types](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf). You will see other types already used for typical data types such as `uint32` as well.
+
 ## Why Protobuf?
 
 - Smaller size, no big luggages like type information when if you used `System.Serializable` + `BinaryFormatter`.
@@ -62,6 +82,8 @@ For complete understanding I suggest you visit [Google's document](https://devel
 - It's not `int` but `int32`. And this data type is not efficient for negative number. (In that case use `sint32`)
 - If you put `//` comment (or multiline) over a field or message definition, it will be transferred nicely to C# comment.
 - It is [possible to generate a C# namespace](https://developers.google.com/protocol-buffers/docs/reference/csharp-generated#structure).
+- The generated class contains parameterless constructor definition, but you still could interfere and add something more because it call `partial void OnConstruction()`, which has no definition and you can add something to it in your handwritten `partial`. This is C#'s [partial method](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/partial-method) feature that works similar to a `partial` class.
+- One thing to note about the timing of `OnConstruction` though, it is called before any data is populated to the instance. For example, if I got a `repeated` `int32` of highscores, I am thinking about maintaining this list to have exactly 10 scores at any moment. To ensure this I add some logic to fill it with empty scores until it has 10 count in `OnConstruction`. However, I later found that when loading from a save file that already has scores (let's say 10 scores as intended), `OnConstruction` comes before `repeated` list is populated from the stream. My code see it as empty where actually it is going to be populated a bit later. The result is I get 20 scores in the deserialized list.
 
 ![project](.Documentation/images/project.png)
 
