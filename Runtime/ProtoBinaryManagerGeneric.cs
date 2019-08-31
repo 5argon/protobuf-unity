@@ -293,8 +293,14 @@ namespace E7.Protobuf
             {
                 return ProtoBinaryManager.ProtoFromFile<PROTO>(key, loadFolderAbsolute, fileNameWithExtension);
             }
-            catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException)
+            catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException || ex is InvalidOperationException)
             {
+                /*
+                    Invalid operation occurs when protobuf goes : 
+                    InvalidOperationException: Wire Type is invalid.
+                    at Google.Protobuf.UnknownFieldSet.MergeFieldFrom
+                 */
+
                 //Migration only available when found the file but not readable.
 #if UNITY_EDITOR
                 Debug.LogWarning(ex);
@@ -308,7 +314,7 @@ namespace E7.Protobuf
 #endif
                     return Validation(migrated);
                 }
-                catch (Exception ex2) when (ex2 is CryptographicException || ex2 is ArgumentException)
+                catch (Exception ex2) when (ex2 is CryptographicException || ex2 is ArgumentException || ex is InvalidOperationException)
                 {
 #if UNITY_EDITOR
                     Debug.LogWarning(ex2);
