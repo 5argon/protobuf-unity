@@ -44,7 +44,7 @@ Resulting C# class looks like this :
 
 ![wellknowntypes2](.Documentation/images/wellknown2.png)
 
-See other predefined [well-known types](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf). You will see other types already used for typical data types such as `uint32` as well.
+See other predefined [well-known types](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf). You will see other types already used for typical data types such as `uint32` as well. Other useful one are [`google.Protobuf.Struct`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#struct) where it could store JSON-like key value pair where the key is string and value is varying type. Use [`google.Protobuf.Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Value) for only the varying value type part of the `Struct`. I think generally when you think you are going to use `google.Protobuf.Any`, think of `Struct` first. (Unless it is really a byte stream.)
 
 ## Why Protobuf?
 
@@ -55,6 +55,11 @@ See other predefined [well-known types](https://developers.google.com/protocol-b
 - Protobuf is flexible that it is a generic C# library, and the serialized file could potentially be read in other languages like on your game server. For more Unity-tuned serialization, you may want to check out [Odin Serializer](https://github.com/TeamSirenix/odin-serializer).
 - Protobuf-generated C# class is powerful. It comes with sensible `partial` and some useful data merging methods which otherwise would be tedious and buggy for a class-type variable. (e.g. it understands how to handle list-like and dictionary-like data, the `repeated` field and `map` field.)
 - Programming in `.proto` to generate a C# class is simply faster and more readable than C# to get the same function. (e.g. has properties, null checks, bells and whistles, and not just all C# `public` fields.)
+
+Here's one interesting rebuttal against Protobuf : http://reasonablypolymorphic.com/blog/protos-are-wrong/
+And here's one interesting counter argument from the author : https://news.ycombinator.com/item?id=18190005
+
+Use your own judgement if you want it or not! 
 
 ## Problem with iOS + IL2CPP
 
@@ -88,7 +93,6 @@ For complete understanding I suggest you visit [Google's document](https://devel
 ![project](.Documentation/images/project.png)
 
 ![code compare](.Documentation/images/codecompare.png)
-
 
 # ProtoBinaryManager
 
@@ -154,6 +158,57 @@ message PlayerData {
 ```
 
 `private` would apply tighter accessor to only one field, `private_message` apply to all fields in the message. But yeah, I didn't work on that yet. I just want to write these documentation as I code. :P
+
+# JSON : interoperation with games backend
+
+`protobuf-unity` and `ProtoBinaryManager` together deals with your **offline** save data. What about taking that online? Maybe it is just for backing up the save file for players (without help from e.g. iCloud), or you want to be able to view, inspect, or award your player something from the server.
+
+The point of protobuf is often to sent everything over the wire with matching protobuf files waiting. But what if you are not in control of the receiving side? The key is often JSON serialization, since that is kinda the standard of interoperability. And what I just want to tell you is to know that there is a class called [`Google.Protobuf.JsonFormatter`](https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/json-formatter) available for use from Google's dll already.
+
+How to use it is just instantiate that class instance (or `JsonFormatter.Default` for no config quick formatting) then `.Format(yourProtobufMessageObject)`. It uses a bunch of reflections to make a key value pairs of C# variable name and its value which may not be the most efficient solution, but it did the trick.
+
+If you want to see what the JSON string looks like, here is one example of `.Format` from my game which contains some nested Protobuf messages as well. That's a lot of strings to represent C# field names. I heard it didn't work well with `any`, not sure. But `repeated` works fine as JSON array `[]` as far as I see it.
+
+```json
+"{ "playerId": "22651ba9-46c6-4be6-b031-d8373fe5c6de", "displayName": "5ARGON", "playerIdHash": -1130147695, "startPlaying": "2019-08-31T09:30:26", "minigameProgresses": { "AirHockey": { "trainingPlayCount": 4, "twoPlayersPlayCount": 1, "trainingHardCleared": true, "trainingChallengeCleared": true, "trainingChallengeClearedCount": 1, "bonusBoostMostRecent": "1970-01-01T00:03:30Z", "accumulatedChilli": 1963, "hardClearStreak": 1, "challengeClearStreak": 1, "inGameTraining": true }, "PerspectiveBaseball": { "arcadePlayCount": 5, "twoPlayersPlayCount": 5, "bonusBoostMostRecent": "2019-09-01T06:43:10Z", "highscoreRecords": [ { "playerName": "PLAYER5778", "score": 40355, "localTimestamp": "2019-09-02T10:38:59.737323Z", "characterConfiguration": { } }, { "playerName": "PLAYER5778", "score": 34805, "localTimestamp": "2019-09-02T10:40:47.862259Z", "characterConfiguration": { } }, { "playerName": "5ARGON", "score": 8495, "localTimestamp": "2019-09-04T09:46:10.733110Z", "characterConfiguration": { } }, { "playerName": "PLAYER5778", "localTimestamp": "2019-09-01T06:43:41.571264Z", "characterConfiguration": { } }, { "localTimestamp": "1970-01-01T00:00:00Z" }, { "localTimestamp": "1970-01-01T00:00:00Z" }, { "localTimestamp": "1970-01-01T00:00:00Z" }, { "localTimestamp": "1970-01-01T00:00:00Z" }, { "localTimestamp": "1970-01-01T00:00:00Z" }, { "localTimestamp": "1970-01-01T00:00:00Z" } ], "accumulatedChilli": 4066 }, "BlowItUp": { "trainingPlayCount": 1, "twoPlayersPlayCount": 4, "trainingHardCleared": true, "accumulatedChilli": 1114, "hardClearStreak": 1 }, "CountFrog": { }, "BombFortress": { "trainingPlayCount": 1, "twoPlayersPlayCount": 2, "trainingHardCleared": true, "trainingChallengeCleared": true, "trainingChallengeClearedCount": 1, "accumulatedChilli": 1566, "hardClearStreak": 1, "challengeClearStreak": 1 }, "StackBurger": { "twoPlayersPlayCount": 2 }, "SwipeBombFood": { }, "CookieTap": { }, "Rocket": { }, "Pulley": { "trainingPlayCount": 2, "accumulatedChilli": 146 }, "Pinball": { }, "Fruits": { }, "Warship": { "twoPlayersPlayCount": 3 } }, "characterConfigurations": { "0": { }, "1": { "kind": "CharacterKind_Bomberjack" } }, "chilli": 58855, "permanentEvents": [ "FirstLanguageSet", "GameReviewed" ], "trialTimestamps": { "Fruits": "2019-09-04T09:57:09.631383Z", "Warship": "2019-09-04T10:34:34.249723Z" }, "savedConfigurations": { "autoGameCenter": true }, "purchasableFeatures": [ "RecordsBoard" ] }"
+```
+
+ If just for backup, you may not need JSON and just dump the binary or base 64 of it and upload the entire thing. But JSON often allows the backend to actually **do something** about it. You may think that there is one benefit of Protobuf that it could be read in a server, so shouldn't we just upload the message instead of JSON? But that maybe only your own server which you code up yourself. For other commercial solutions maybe you need JSON.
+ 
+ For example [Microsoft Azure Playfab](https://playfab.com/) supports [attaching JSON object](https://docs.microsoft.com/en-us/gaming/playfab/features/data/entities/quickstart#entity-objects) to your entity. Then with understandable save data available in Playfab, you are able to segment and do live dev ops based on the save, e.g. the player that progressed slower in the game. Or award points from the server on event completion, then the player sync back to Protobuf in the local device. (However attaching a generic file [is also possible](https://docs.microsoft.com/en-us/gaming/playfab/features/data/entities/quickstart#entity-files).)
+
+## Node JS example
+
+Here's an example how to setup Node's `Crypto` so it decrypts what C# encrypted. Assuming you have already got a Node `Buffer` of your save data at the server : 
+
+```js
+function decipher(saveBuffer)
+{
+    //Mirrors `Rfc2898DeriveBytes` in C#. Use the same password and salt, and iteration count if you changed it.
+    const key = pbkdf2Sync(encryptionPassword, encryptionSalt, 5555, 16, 'sha1')
+
+    //Pick the IV from cipher text
+    const iv = saveBuffer.slice(0, 16)
+
+    //The remaining real content
+    const content = saveBuffer.slice(16)
+
+    //C# default when just creating `AesCryptoServiceProvider` is in CBC mode and with PKCS7 padding mode.
+    const decipher = createDecipheriv('aes-128-cbc', key, iv)
+
+    const decrypted = decipher.update(content)
+    const final = decipher.final()
+    const finalBuffer = Buffer.concat([decrypted, final])
+
+    //At this point you get a naked protobuf bytes without encryption.
+
+    return YourGeneratedProtoClassJs.deserializeBinary(finalBuffer)
+}
+```
+
+## Repeated enum bug?
+
+It works serializing at C# and deserializing at C# just fine. But if you get `Unhandled error { AssertionError: Assertion failed` when trying to turn the buffer made from C# into JS object, it may be [this bug from a year ago](https://github.com/protocolbuffers/protobuf/issues/5232). I just encountered it in protobuf 3.10.0 (October 2019). Adding `[packed=false]` does not fix the issue for me.
 
 # License
 

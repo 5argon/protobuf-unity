@@ -38,6 +38,16 @@ namespace E7.Protobuf
                 using (Google.Protobuf.CodedInputStream cis = new Google.Protobuf.CodedInputStream(cryptoStream))
                 {
                     loadedData = new MessageParser<P>(() => new P()).ParseFrom(cis);
+                    // using (MemoryStream ms = new MemoryStream())
+                    // {
+                    //     using (Google.Protobuf.CodedOutputStream cos = new CodedOutputStream(ms))
+                    //     {
+                    //         loadedData.WriteTo(cos);
+                    //     }
+                    //     Debug.Log(loadedData);
+                    //     Debug.Log(string.Join( " " , ms.ToArray().Select(x => x.ToString("X2"))));
+                    //     Debug.Log(ms.ToArray().Length);
+                    // }
                     return loadedData;
                 }
             }
@@ -80,11 +90,37 @@ namespace E7.Protobuf
             AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
             aes.Key = key;
             aes.GenerateIV();
+            // Debug.Log(aes.BlockSize);
+            // Debug.Log(aes.KeySize);
+            // Debug.Log(aes.FeedbackSize);
+            // Debug.Log(aes.Padding);
 
             //Simply paste the initialization vector in front of cipher text.
             memStream.Write(aes.IV, 0, 16);
 
-            //Debug.Log("Writing " + BitConverter.ToString(des.IV));
+            // Debug.Log("Key " + BitConverter.ToString(aes.Key));
+            // Debug.Log("IV " + BitConverter.ToString(aes.IV));
+            // using (MemoryStream ms = new MemoryStream())
+            // {
+            //     using (Google.Protobuf.CodedOutputStream cos = new CodedOutputStream(ms))
+            //     {
+            //         save.WriteTo(cos);
+            //     }
+            //     Debug.Log(save);
+            //     var a = ms.ToArray();
+            //     Debug.Log(string.Join(" ", a.Select(x => x.ToString("X2"))));
+            //     Debug.Log(a.Length);
+
+            //     using (MemoryStream ms2 = new MemoryStream())
+            //     {
+            //         using (var cryptoStream = new CryptoStream(ms2, aes.CreateEncryptor(), CryptoStreamMode.Write))
+            //         {
+            //             cryptoStream.Write(a, 0, a.Length);
+            //         }
+            //         Debug.Log(string.Join(" ", ms2.ToArray().Select(x => x.ToString("X2"))));
+            //         Debug.Log(ms2.ToArray().Length);
+            //     }
+            // }
 
             using (var cryptoStream = new CryptoStream(memStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
             {
@@ -93,6 +129,8 @@ namespace E7.Protobuf
                     save.WriteTo(cos);
                 }
             }
+            // Debug.Log(string.Join( " " , memStream.ToArray().Select(x => x.ToString("X2"))));
+            // Debug.Log(memStream.ToArray().Length);
             return memStream;
         }
 

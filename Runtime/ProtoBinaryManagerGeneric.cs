@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf;
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
@@ -110,7 +111,13 @@ namespace E7.Protobuf
         private byte[] key;
         public ProtoBinaryManager()
         {
-            derivator = new Rfc2898DeriveBytes(Encoding.ASCII.GetBytes(EncryptionPassword), Encoding.ASCII.GetBytes(EncryptionSalt), 5555);
+            //If you use new line in your password or salt string, 
+            //Windows machine could produce different result because it uses \r\n instead of just \n
+            var password = EncryptionPassword.Replace("\r","");
+            var salt = EncryptionSalt.Replace("\r","");
+            // Debug.Log(string.Join(" ",Encoding.ASCII.GetBytes(password).Select(x => x.ToString("X"))));
+            // Debug.Log(string.Join(" ",Encoding.ASCII.GetBytes(salt).Select(x => x.ToString("X"))));
+            derivator = new Rfc2898DeriveBytes(Encoding.ASCII.GetBytes(password), Encoding.ASCII.GetBytes(salt), 5555);
             key = derivator.GetBytes(16);
         }
 
@@ -199,6 +206,9 @@ namespace E7.Protobuf
             }
         }
 
+        /// <summary>
+        /// By default this returns AES encrypted protobuf bytes.
+        /// </summary>
         public byte[] ToBytes(PROTO save)
         {
             using (var memStream = ToStream(save))
