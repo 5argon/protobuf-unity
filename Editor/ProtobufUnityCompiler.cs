@@ -116,6 +116,9 @@ namespace E7.Protobuf
                     options += string.Format(" --proto_path \"{0}\" ", s);
                 }
 
+                // Checking if the user has set valid path (there is probably a better way)
+                if (ProtoPrefs.grpcPath != "ProtobufUnity_GrpcPath" || ProtoPrefs.grpcPath != string.Empty)
+                    options += $" --grpc_out={outputPath} --plugin=protoc-gen-grpc={ProtoPrefs.grpcPath}";
                 //string combinedPath = string.Join(" ", optionFiles.Concat(new string[] { protoFileSystemPath }));
 
                 string finalArguments = string.Format("\"{0}\"", protoFileSystemPath) + string.Format(options, outputPath);
