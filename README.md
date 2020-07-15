@@ -27,7 +27,7 @@ Leave empty or like it is if you don't want to use gRPC
 
 2. You could use `import` statement in your `.proto` file, which normally looks for all files in `--proto_path` folders input to the command line. (You cannot use relative path such as `../` in `import`) With protobuf-unity, `--proto_path` will be all parent folders of all `.proto` file in your Unity project *combined*. This way you can use `import` to refer to any `.proto` file within your Unity project. (They should not be in UPM package though, I used `Application.dataPath` as a path base and packages aren't in here.) Also, `google/protobuf/` path is usable. For example, utilizing [well-known types](https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/unittest_well_known_types.proto) or extending [custom options](https://developers.google.com/protocol-buffers/docs/proto#customoptions).
 
-3. Your generated class will then contains `using Google.Protobuf` usage, so additionally you have to add `Google.Protobuf.dll` precompiled library in your Unity project or link to your `asmdef`. This plugin itself doesn't need it, and I didn't bundle the `dll` along with this. You can go to [the repo](https://github.com/protocolbuffers/protobuf) and compile manually or download the Nuget package here https://www.nuget.org/packages/Google.Protobuf then use archive extract tools to get the .dll out. It contains targets such as .NET 4.6 and .NET Standard 1.0/2.0. Then it will ask for `System.Memory.dll` because it want to use `Span` class but Unity is not supporting it yet. By also [downloading it](https://www.nuget.org/packages/System.Memory/), it will then ask for missing references `System.Runtime.CompilerServices.Unsafe` and `System.Buffers`. To prevent you having to fetch missing `dll` over and over in chains, you can uncheck "Validate References" on the `System.Memory.dll`. Usually skipping the validation is bad, as if Protobuf ended up using the area of code in `System.Memory.dll` that needs them and could not dynamically link, then it probably crash. But so far seems like it is not the case.
+3. Your generated class will then contains `using Google.Protobuf` usage, so additionally you have to add `Google.Protobuf.dll` precompiled library in your Unity project or link to your `asmdef`. This plugin itself doesn't need it, and I didn't bundle the `dll` along with this. You can go to [the repo](https://github.com/protocolbuffers/protobuf) and compile manually or download [the Nuget package](https://www.nuget.org/packages/Google.Protobuf) then use archive extract tools to get the .dll out. It contains targets such as .NET 4.6 and .NET Standard 1.0/2.0. Then it will ask for `System.Memory.dll` because it want to use `Span` class but Unity is not supporting it yet. By also [downloading it](https://www.nuget.org/packages/System.Memory/), it will then ask for missing references `System.Runtime.CompilerServices.Unsafe` [here](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/) and `System.Buffers` [here](https://www.nuget.org/packages/System.Buffers/). With all 4 libraries, it works in the real device just fine as far as I tested.
 
 ## How to use Google-made well known types
 
@@ -162,9 +162,11 @@ message PlayerData {
 
 `private` would apply tighter accessor to only one field, `private_message` apply to all fields in the message. But yeah, I didn't work on that yet. I just want to write these documentation as I code. :P
 
-# JSON : interoperation with games backend
+# Interoperate with games backend
 
 `protobuf-unity` and `ProtoBinaryManager` together deals with your **offline** save data. What about taking that online? Maybe it is just for backing up the save file for players (without help from e.g. iCloud), or you want to be able to view, inspect, or award your player something from the server.
+
+## JSON at client side
 
 The point of protobuf is often to sent everything over the wire with matching protobuf files waiting. But what if you are not in control of the receiving side? The key is often JSON serialization, since that is kinda the standard of interoperability. And what I just want to tell you is to know that there is a class called [`Google.Protobuf.JsonFormatter`](https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/json-formatter) available for use from Google's dll already.
 
@@ -179,10 +181,14 @@ If you want to see what the JSON string looks like, here is one example of `.For
  If just for backup, you may not need JSON and just dump the binary or base 64 of it and upload the entire thing. But JSON often allows the backend to actually **do something** about it. You may think that there is one benefit of Protobuf that it could be read in a server, so shouldn't we just upload the message instead of JSON? But that maybe only your own server which you code up yourself. For other commercial solutions maybe you need JSON.
  
  For example [Microsoft Azure Playfab](https://playfab.com/) supports [attaching JSON object](https://docs.microsoft.com/en-us/gaming/playfab/features/data/entities/quickstart#entity-objects) to your entity. Then with understandable save data available in Playfab, you are able to segment and do live dev ops based on the save, e.g. the player that progressed slower in the game. Or award points from the server on event completion, then the player sync back to Protobuf in the local device. (However attaching a generic file [is also possible](https://docs.microsoft.com/en-us/gaming/playfab/features/data/entities/quickstart#entity-files).)
+ 
+## Deciphering Protobuf at server side
 
-## Node JS example
+As opposed to doing JSON at client side and send it to server, how about sending protobuf bytes to the server and deserialize with JS version of generated code instead?
 
-Here's an example how to setup Node's `Crypto` so it decrypts what C# encrypted. I used this pattern in my Firebase Functions where it spin up Node server with a lambda code fragment, receiving the save file for safekeeping and at the same time decipher it so server knows the save file's content. Assuming you have already got a Node `Buffer` of your save data at the server as `content` : 
+### Node JS example
+
+Here's an example how to setup Node's `Crypto` so it decrypts what C# encrypted in my code. I used this pattern in my Firebase Functions where it spin up Node server with a lambda code fragment, receiving the save file for safekeeping and at the same time decipher it so server knows the save file's content. Assuming you have already got a Node `Buffer` of your save data at the server as `content` : 
 
 ```js
 function decipher(saveBuffer)
@@ -204,10 +210,22 @@ function decipher(saveBuffer)
     const finalBuffer = Buffer.concat([decrypted, final])
 
     //At this point you get a naked protobuf bytes without encryption.
-
+    //Now you can obtain a nicely structured class data.
     return YourGeneratedProtoClassJs.deserializeBinary(finalBuffer)
 }
 ```
+
+### Compatibility with Google Firebase Firestore
+
+Firestore could store JSON-like data, and the JS Firestore library can store JS object straight into it. However not everything are supported as JS object is a superset of what Firestore supports.
+
+One thing it cannot store `undefined`, and other it cannot store nested arrays. While `undefined` does not exist in JSON, nested array is possible in JSON but not possible to be stored in Firestore.
+
+ What you get from `YourGeneratedProtoClassJs.deserializeBinary` is not JS object. It is a `class` instance of Protobuf message. There is a method `.ToObject()` available to change it to JS object, but if you take a look at what you had as `map<A,B>`, the `.ToObject()` produces `[A,B][]` instead. This maybe how Protobuf really keep your `map`. Unfortunately as I said, nested array can't go straight into Firestore.
+
+After eliminating possible `undefined` or `null`, you need to manually post-process every `map` field (and nested ones), changing `[A,B][]` into a proper JS object by using `A` as key and `B` as value by looping over them and replace the field.
+
+`repeated` seems to be `ToObject()`-ed just fine. It is just a straight array.
 
 ## Bugs?
 
