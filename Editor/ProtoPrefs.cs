@@ -8,6 +8,7 @@ namespace E7.Protobuf
     {
         internal static readonly string prefProtocEnable = "ProtobufUnity_Enable";
         internal static readonly string prefProtocExecutable = "ProtobufUnity_ProtocExecutable";
+        internal static readonly string prefGrpcPath = "ProtobufUnity_GrpcPath";
         internal static readonly string prefLogError = "ProtobufUnity_LogError";
         internal static readonly string prefLogStandard = "ProtobufUnity_LogStandard";
         internal static bool enabled
@@ -73,6 +74,22 @@ namespace E7.Protobuf
             }
         }
 
+        internal static string grpcPath
+        {
+            get
+            {
+                string ret = EditorPrefs.GetString(prefGrpcPath, "");
+                if (ret.StartsWith(".."))
+                    return Path.Combine(Application.dataPath, ret);
+                else
+                    return ret;
+            }
+            set
+            {
+                EditorPrefs.SetString(prefGrpcPath, value);
+            }
+        }
+
 #if UNITY_2018_3_OR_NEWER
         internal class ProtobufUnitySettingsProvider : SettingsProvider
         {
@@ -107,6 +124,11 @@ namespace E7.Protobuf
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Path to protoc", GUILayout.Width(100));
             rawExcPath = EditorGUILayout.TextField(rawExcPath, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Path to grpc", GUILayout.Width(100));
+            grpcPath = EditorGUILayout.TextField(grpcPath, GUILayout.ExpandWidth(true));
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
