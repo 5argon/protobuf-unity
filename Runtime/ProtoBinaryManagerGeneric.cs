@@ -10,72 +10,91 @@ namespace E7.Protobuf
 {
     /// <summary>
     /// This is a manager for dealing with local save file designed from Protobuf.
+    /// </summary>
+    /// <remarks>
     /// However You can use it with just about any protobuf generated class that you want to write it to the disk.
     /// But in the documentation I will refer to your proto data as "save file".
     /// 
-    /// As you know protobuf generates a C# class with `partial`, this manager connects to that loosely via type params and interface, 
-    /// no subclassing from that actual `partial` data class required. Instead you subclass a specialized manager from this `abstract` class.
+    /// As you know protobuf generates a C# class with `partial`,
+    /// this manager connects to that loosely via type params and interface, 
+    /// no subclassing from that actual `partial` data class required.
+    /// Instead you subclass a specialized manager from this `abstract` class.
     /// 
-    /// Tips : If you name your class as `LocalSave`, then you will be able to nicely type `LocalSave.Save()` or `LocalSave.Manager` and do things.
+    /// Tips : If you name your class as `LocalSave`, then you will be able to nicely type
+    /// `LocalSave.Save()` or `LocalSave.Manager` and do things.
     /// 
-    /// **Active save** : an *in-memory* save *data* game is using via <see cref="Active">.
-    /// <see cref="Active"> loads a default save from disk called "main save file", or use a cached one if loaded already.
+    /// **Active save** : an *in-memory* save *data* game is using via <see cref="Active"/>.
+    /// <see cref="Active"/> loads a default save from disk called "main save file", or use a cached one if loaded already.
     /// 
-    /// **Main save file** : a save *file* stored on *disk* with name <see cref="MainFileName">.
-    /// Your active save became this file via <see cref="Save">, 
-    /// but you could get a <typeparamref name="PROTO"> from elsewhere and use <see cref="ApplyToActive(PROTO)"> to set it as active.
+    /// **Main save file** : a save *file* stored on *disk* with name <see cref="MainFileName"/>.
+    /// Your active save became this file via <see cref="Save()"/>,
+    /// 
+    /// You could get a <typeparamref name="PROTO"/> from elsewhere
+    /// and use <see cref="ApplyToActive(PROTO)"/> to set it as active.
     /// 
     /// Nowadays games are mostly single-save and autosaved, so it is convenient to keep overwriting the same file by default.
     /// Many methods in this class was designed to deal with the active slot.
-    /// </summary>
+    /// </remarks>
     /// <typeparam name="PROTO">The type of your protobuf generated class.</typeparam>
-    /// <typeparam name="SELF">Throw the name of your manager subclass itself into this type param for `static` magic <see cref="Active"> and <see cref="Manager"> to happen.</typeparam>
+    /// <typeparam name="SELF">Throw the name of your manager subclass itself into this type param
+    /// for `static` magic <see cref="Active"/> and <see cref="Manager"/> to happen.</typeparam>
     public abstract class ProtoBinaryManager<PROTO, SELF>
-    where PROTO : IMessage<PROTO>, new()
-    where SELF : ProtoBinaryManager<PROTO, SELF>, new()
+        where PROTO : IMessage<PROTO>, new()
+        where SELF : ProtoBinaryManager<PROTO, SELF>, new()
     {
         /// <summary>
-        /// Appended **before** the usual file name's extension for <see cref="BackupActive">.
+        /// Appended **before** the usual file name's extension for <see cref="BackupActive"/>.
         /// </summary>
         protected virtual string BackupSuffix => ".backup";
 
         /// <summary>
-        /// A save file associated with <see cref="Active"> save data slot. This is without extension.
+        /// A save file associated with <see cref="Active"/> save data slot. This is without extension.
         /// </summary>
         protected virtual string MainFileName => "SaveData";
 
         /// <summary>
         /// Default extension for files generated from this manager.
-        /// 
+        /// </summary>
+        /// <remarks>
         /// This maybe important when your user has a problem, then you could tell him to look for
         /// a file with certain extension and copy that out. So having an easily identifiable helps.
-        /// </summary>
+        /// </remarks>
         protected virtual string SaveFileExtension => ".save";
 
         private string SaveFolderAbsolute => $"{Application.persistentDataPath}/{InnerSaveFolder}";
         private string MainSaveFilePath => $"{SaveFolderAbsolute}/{MainFileName}{SaveFileExtension}";
 
         /// <summary>
-        /// A folder continued from <see cref="Application.persistentDataPath"> which the save file will be in.
-        /// Do not add ending slash. Use empty string to place the save file at persistent path root.
+        /// A folder continued from <see cref="Application.persistentDataPath"/> which the save file will be in.
         /// </summary>
+        /// <remarks>
+        /// Do not add ending slash. Use empty string to place the save file at persistent path root.
+        /// </remarks>
         protected virtual string InnerSaveFolder => string.Empty;
 
         /// <summary>
-        /// Specify what to do if the save file is found but throw <see cref="CryptographicException"> or <see cref="ArgumentException"> exception while loading it.
-        /// Usually this is when you changed the save file's structure and the old key could no longer be used.
+        /// Specify what to do if the save file is found but throw <see cref="CryptographicException"/>
+        /// or <see cref="ArgumentException"/> exception while loading it.
         /// </summary>
+        /// <remarks>
+        /// Usually this is when you changed the save file's structure and the old key could no longer be used,
+        /// or hacker did something with the save file.
+        /// </remarks>
         protected virtual PROTO Migration(string problematicFilePathWithExtension) => new PROTO();
 
         /// <summary>
         /// Specify what to do after successfully loading each save from disk.
-        /// For example, you may try to prevent players hacking your local save file by further checking against saved hash here.
         /// </summary>
+        /// <remarks>
+        /// For example, you may try to prevent players hacking your local save file by further checking against saved hash here.
+        /// </remarks>
         protected virtual PROTO Validation(PROTO loadedSaveData) => loadedSaveData;
 
         /// <summary>
-        /// A password for simple encoding in <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)">, 
-        /// 
+        /// A password string to derive into key,
+        /// for AES encoding in <see cref="FromStream(Stream)"/> and <see cref="ToStream(PROTO)"/>, 
+        /// </summary>
+        /// <remarks>
         /// This is a getter property, if your game is completely client-side you can choose your own poison, for example : 
         /// - Hard code it (e.g. `=> "My password is easily disassembled"`)
         /// - Load it from an another static code, which is obfuscated.
@@ -83,41 +102,48 @@ namespace E7.Protobuf
         /// 
         /// Protobuf encoding is not an encryption, the bit patterns are documented [here](https://developers.google.com/protocol-buffers/docs/encoding)
         /// 
-        /// Also you could override both <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)"> and provide your own algorithm.
-        /// </summary>
+        /// Also you could override both <see cref="FromStream(Stream)"/> and <see cref="ToStream(PROTO)"/>
+        /// and provide your own algorithm.
+        /// </remarks>
         protected abstract string EncryptionPassword { get; }
 
         /// <summary>
-        /// A password salt for simple encoding in <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)">, 
-        /// 
-        /// This is a getter property, if your game is completely client-side you can choose your own poison, for example : 
-        /// - Hard code it (e.g. `=> "My password is easily disassembled"`)
-        /// - Load it from an another static code, which is obfuscated.
-        /// - Make unmanaged call to non-C# code or DLL and get your stuff.
-        /// 
-        /// Protobuf encoding is not an encryption, the bit patterns are documented [here](https://developers.google.com/protocol-buffers/docs/encoding)
-        /// 
-        /// Also you could override both <see cref="FromStream(Stream)"> and <see cref="ToStream(PROTO)"> and provide your own algorithm.
-        /// 
-        /// Note that usually salt should be regenerated and provided together with the cipher text. The default implementation uses fixed salt
-        /// without providing the salt along with the encrypted data, so it kind of defeat the purpose other than making the KDF work.
+        /// A salt string to derive into key,
+        /// for AES encoding in <see cref="FromStream(Stream)"/> and <see cref="ToStream(PROTO)"/>, 
+        /// </summary>
+        /// <remarks>
+        /// Note that usually salt should be regenerated and provided together with the cipher text.
+        /// The default implementation uses fixed salt without providing the salt along with the encrypted data,
+        /// so it kind of defeat the purpose other than making the KDF work.
         /// 
         /// If you want to do it properly, when you override those then you can use this property as generated salt 
         /// then paste the salt along with the data.
-        /// </summary>
+        /// </remarks>
         protected abstract string EncryptionSalt { get; }
+
+        /// <summary>
+        /// Iteration count for [PBKDF2](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.rfc2898derivebytes),
+        /// which turns your password and salt into an encryption key.
+        /// </summary>
+        /// <remarks>
+        /// The point of derivation is so that the key looks inhumanly random while coming from something human
+        /// like a password string.
+        /// </remarks>
+        protected abstract int EncryptionIteration { get; }
 
         private Rfc2898DeriveBytes derivator;
         private byte[] key;
+
         public ProtoBinaryManager()
         {
             //If you use new line in your password or salt string, 
             //Windows machine could produce different result because it uses \r\n instead of just \n
-            var password = EncryptionPassword.Replace("\r","");
-            var salt = EncryptionSalt.Replace("\r","");
+            var password = EncryptionPassword.Replace("\r", "");
+            var salt = EncryptionSalt.Replace("\r", "");
             // Debug.Log(string.Join(" ",Encoding.ASCII.GetBytes(password).Select(x => x.ToString("X"))));
             // Debug.Log(string.Join(" ",Encoding.ASCII.GetBytes(salt).Select(x => x.ToString("X"))));
-            derivator = new Rfc2898DeriveBytes(Encoding.ASCII.GetBytes(password), Encoding.ASCII.GetBytes(salt), 5555);
+            derivator = new Rfc2898DeriveBytes(Encoding.ASCII.GetBytes(password), Encoding.ASCII.GetBytes(salt),
+                EncryptionIteration);
             key = derivator.GetBytes(16);
         }
 
@@ -134,6 +160,7 @@ namespace E7.Protobuf
                 {
                     manager = new SELF();
                 }
+
                 return manager;
             }
         }
@@ -143,14 +170,14 @@ namespace E7.Protobuf
         /// <summary>
         /// The manager gives you 1 special loaded in-memory save data slot by loading from the "main save file".
         /// It automatically loads on using this property if not yet.
-        /// 
+        /// </summary>
+        /// <remarks>
         /// If you don't want a reference to this assembly everywhere you use this property,
         /// you could make a new `Active` in your subclass as `new`, like this :
-        /// 
         /// <code>
-        /// public static new PlayerData Active => ProtoSaveManager<YourData, YourSubclassName>.Active;
+        /// public static new PlayerData Active => ProtoSaveManager&lt;YourData, YourSubclassName&gt;.Active;
         /// </code>
-        /// </summary>
+        /// </remarks>
         public static PROTO Active
         {
             get
@@ -159,26 +186,28 @@ namespace E7.Protobuf
                 {
                     Manager.ReloadActive();
                 }
+
                 return active;
             }
         }
 
         /// <summary>
-        /// The easiest save method, which save the <see cref="Active"> save data to main file.
+        /// The easiest save method, which save the <see cref="Active"/> save data to main save file.
         /// </summary>
         public static void Save() => Manager.Save(active, $"{Manager.MainFileName}");
 
         /// <summary>
-        /// Backup the <see cref="Active"> save to a new backup file.
-        /// 
+        /// Backup the <see cref="Active"/> save to a new backup file.
+        /// </summary>
+        /// <remarks>
         /// You can use this as a safety net to backup occassionally
         /// and in the case that the save corrupted (by your mistake or disk failure), at least your player could 
         /// dig the backup and see if it works or not.
         /// 
-        /// Or you could use the built-in <see cref="RestoreFromBackup"> to replace the active save memory with the backup.
+        /// Or you could use the built-in <see cref="RestoreFromBackup"/> to replace the active save memory with the backup.
         /// 
         /// TODO : Make this method backup incrementally as multiple files, with timestamp.
-        /// </summary>
+        /// </remarks>
         public void BackupActive() => Save(active, $"{Manager.MainFileName}{Manager.BackupSuffix}");
 
         /// <summary>
@@ -186,10 +215,11 @@ namespace E7.Protobuf
         /// 
         /// TODO : When backup could do multiple files, this should use the most recent one.
         /// </summary>
-        public void RestoreFromBackup() => Manager.ApplyToActive(Manager.Load($"{Manager.MainFileName}{Manager.BackupSuffix}"));
+        public void RestoreFromBackup() =>
+            Manager.ApplyToActive(Manager.Load($"{Manager.MainFileName}{Manager.BackupSuffix}"));
 
         /// <summary>
-        /// Reload main save file into <see cref="Active"> slot, discarding all unsaved changes.
+        /// Reload main save file into <see cref="Active"/> slot, discarding all unsaved changes.
         /// </summary>
         public void ReloadActive() => Manager.ApplyToActive(Manager.LoadMain());
 
@@ -230,14 +260,16 @@ namespace E7.Protobuf
         /// <summary>
         /// Save any save file with custom name using the same extension your game had been using.
         /// </summary>
-        public void Save(PROTO save, string fileNameWithoutExtension) => SaveAs(save, $"{fileNameWithoutExtension}{Manager.SaveFileExtension}");
+        public void Save(PROTO save, string fileNameWithoutExtension) =>
+            SaveAs(save, $"{fileNameWithoutExtension}{Manager.SaveFileExtension}");
 
-        private void SaveAs(PROTO save, string fileNameWithExtension) 
+        private void SaveAs(PROTO save, string fileNameWithExtension)
             => ProtoBinaryManager.StreamToFile(ToStream(save), SaveFolderAbsolute, fileNameWithExtension);
 
         /// <summary>
-        /// The default implementation picks up 16 bytes IV from the front of cipher text, 
-        /// use it together with a key derived from  <see cref="EncryptionPassword"> and <see cref="EncryptionSalt"> to AES decode the protobuf stream.
+        /// The default implementation picks up 16 bytes AES IV from the front of cipher text, 
+        /// use it together with a key derived from  <see cref="EncryptionPassword"/>
+        /// and <see cref="EncryptionSalt"/> to AES decode the protobuf stream.
         /// 
         /// You could override to something more sophisticated if you want.
         /// </summary>
@@ -249,7 +281,8 @@ namespace E7.Protobuf
         }
 
         /// <summary>
-        /// The default implementation applies basic AES encryption with a key derived from <see cref="EncryptionPassword"> and <see cref="EncryptionSalt">,
+        /// The default implementation applies basic AES encryption with a key
+        /// derived from <see cref="EncryptionPassword"/> and <see cref="EncryptionSalt"/>,
         /// with generated IV pasted in front of cipher text, before writing to the disk.
         /// 
         /// You could override to something more sophisticated if you want.
@@ -257,12 +290,16 @@ namespace E7.Protobuf
         public virtual MemoryStream ToStream(PROTO save) => ProtoBinaryManager.ProtoToStream(save, key);
 
         /// <summary>
-        /// Load and return the main save file. Its state may be behind of the current <see cref="Active"> save file.
+        /// Load and return the main save file. Its state may be behind of the current <see cref="Active"/> save file.
+        /// </summary>
+        /// <remarks>
         /// You could use this for progress comparison in the save overwriting dialog, for example.
         /// 
         /// If there is no save file, you get a fresh save instead of an exception. This fresh save is just `new`.
-        /// Protobuf generated `OnConstruction()` `partial` method for you to add your own custom logic, which the constructor will call into.
-        /// </summary>
+        /// 
+        /// Protobuf generated `OnConstruction()` `partial` method for you to add your own custom logic,
+        /// which the constructor will call into.
+        /// </remarks>
         public PROTO LoadMain()
         {
             try
@@ -276,25 +313,28 @@ namespace E7.Protobuf
         }
 
         /// <summary>
-        /// Load any save file in the <see cref="InnerSaveFolder">. Use <see cref="ApplyToActive(PROTO)"> to make the returned save data the <see cref="Active"> save.
+        /// Load any save file in the <see cref="InnerSaveFolder"/>.
+        /// Use <see cref="ApplyToActive(PROTO)"/> to make the returned save data the <see cref="Active"/> save.
         /// </summary>
-        public PROTO Load(string fileNameWithoutExtension) => FromFile($"{SaveFolderAbsolute}", $"{fileNameWithoutExtension}{SaveFileExtension}");
+        public PROTO Load(string fileNameWithoutExtension) =>
+            FromFile($"{SaveFolderAbsolute}", $"{fileNameWithoutExtension}{SaveFileExtension}");
 
         /// <summary>
-        /// Overwrite an <see cref="Active"> save slot with an arbitrary save data.
+        /// Overwrite an <see cref="Active"/> save slot with an arbitrary save data.
         /// </summary>
         public void ApplyToActive(PROTO save) => active = save;
 
         /// <summary>
-        /// A destructive operation that turn back the <see cref="Active"> save to clean state.
+        /// A destructive operation that turn back the <see cref="Active"/> save to clean state.
         /// But it is only in active slot which is in your memory.
-        /// The main physical save file remains intact until you <see cref="Save"> it for real.
+        /// The main physical save file remains intact until you <see cref="Save()"/> it for real.
         /// </summary>
         public void ResetActive() => ApplyToActive(new PROTO());
 
         /// <summary>
-        /// Unlike <see cref="ProtoBinaryManager.ProtoFromFile{PROTO}(byte[], string, string)">, it has some recovery options when the
-        /// file is hacked or corrupted. (but the file must exist, otherwise it will throw `FileNotFoundException` as usual)
+        /// Unlike <see cref="ProtoBinaryManager.ProtoFromFile{PROTO}(byte[], string, string)"/>,
+        /// it has some recovery options when the file is hacked or corrupted.
+        /// (but the file must exist, otherwise it will throw <see cref="FileNotFoundException"/> as usual)
         /// </summary>
         private PROTO FromFile(string loadFolderAbsolute, string fileNameWithExtension)
         {
@@ -303,7 +343,8 @@ namespace E7.Protobuf
             {
                 return ProtoBinaryManager.ProtoFromFile<PROTO>(key, loadFolderAbsolute, fileNameWithExtension);
             }
-            catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException || ex is InvalidOperationException)
+            catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException ||
+                                       ex is InvalidOperationException)
             {
                 /*
                     Invalid operation occurs when protobuf goes : 
@@ -324,7 +365,8 @@ namespace E7.Protobuf
 #endif
                     return Validation(migrated);
                 }
-                catch (Exception ex2) when (ex2 is CryptographicException || ex2 is ArgumentException || ex is InvalidOperationException)
+                catch (Exception ex2) when (ex2 is CryptographicException || ex2 is ArgumentException ||
+                                            ex is InvalidOperationException)
                 {
 #if UNITY_EDITOR
                     Debug.LogWarning(ex2);
@@ -340,22 +382,24 @@ namespace E7.Protobuf
         /// <summary>
         /// Useful in unit testing. You could have a sample of old version saves from player and test your compatibility with them.
         /// Or just a way to setup the test for specific scenario you want to check out based on preset save files.
-        /// 
-        /// Do not include `Assets` or leading slash in the <paramref name="path">.
-        /// File name don't need extension, it uses <see cref="SaveFileExtension"> in your subclassed manager class.
         /// </summary>
-        public PROTO FromProject(string path, string name) => FromFile($"{Application.dataPath}/{path}", $"{name}{SaveFileExtension}");
+        /// <remarks>
+        /// Do not include `Assets` or leading slash in the <paramref name="path"/>.
+        /// File name don't need extension, it uses <see cref="SaveFileExtension"/> in your subclassed manager class.
+        /// </remarks>
+        public PROTO FromProject(string path, string name) =>
+            FromFile($"{Application.dataPath}/{path}", $"{name}{SaveFileExtension}");
 
         /// <summary>
         /// Useful in unit testing. You could have a sample of old version saves from player and test your compatibility with them.
         /// Or just a way to setup the test for specific scenario you want to check out based on preset save files.
-        /// 
-        /// Do not include `Assets` or leading slash in the <paramref name="path">.
-        /// File name don't need extension, it uses <see cref="SaveFileExtension"> in your subclassed manager class.
         /// </summary>
+        /// <remarks>
+        /// Do not include `Assets` or leading slash in the <paramref name="path"/>.
+        /// File name don't need extension, it uses <see cref="SaveFileExtension"/> in your subclassed manager class.
+        /// </remarks>
         public void ApplyFromProjectToActive(string path, string name) => ApplyToActive(FromProject(path, name));
 
 #endif
-
     }
 }

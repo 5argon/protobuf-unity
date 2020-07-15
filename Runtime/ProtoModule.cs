@@ -13,19 +13,20 @@ namespace E7.Protobuf
     /// 
     /// With "proto modules", it is just a wrapper class that could access your protobuf data and tell it to save. That's it!
     /// It is not even serialized, it is just an interface to your original protobuf data.
-    /// 
+    /// </summary>
+    /// <remarks>
     /// Setup instances of module in your `OnConstruction()` `partial` method, then put itself in.
-    /// 
-    /// ```csharpproto
+    ///
+    /// <code>
     /// public CurrencyModule Currency { get; private set; }
     /// partial void OnConstruction()
     /// {
     ///     Currency = new CurrencyModule(this);
     /// }
-    /// ```
+    /// </code>
     /// 
     /// Then you could `saveFileInstance.Currency.____`, as a way to organize common methods together.
-    /// </summary>
+    /// </remarks>
     /// <typeparam name="PROTO">Your protobuf generated type here.</typeparam>
     public abstract class ProtoModule<PROTO, MANAGER>
     where PROTO : IMessage<PROTO>, new()

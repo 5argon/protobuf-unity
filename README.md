@@ -27,11 +27,7 @@ Leave empty or like it is if you don't want to use gRPC
 
 2. You could use `import` statement in your `.proto` file, which normally looks for all files in `--proto_path` folders input to the command line. (You cannot use relative path such as `../` in `import`) With protobuf-unity, `--proto_path` will be all parent folders of all `.proto` file in your Unity project *combined*. This way you can use `import` to refer to any `.proto` file within your Unity project. (They should not be in UPM package though, I used `Application.dataPath` as a path base and packages aren't in here.) Also, `google/protobuf/` path is usable. For example, utilizing [well-known types](https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/unittest_well_known_types.proto) or extending [custom options](https://developers.google.com/protocol-buffers/docs/proto#customoptions).
 
-3. Your generated class will then contains `using Google.Protobuf` usage, so additionally you have to add `Google.Protobuf.dll` precompiled library in your Unity project or link to your `asmdef`. This plugin itself doesn't need it, and I didn't bundle the `dll` along with this.
-
-- You can go to [the repo](https://github.com/protocolbuffers/protobuf) and compile manually or download the Nuget package here https://www.nuget.org/packages/Google.Protobuf then use archive extract tools to get the .dll out. It contains targets such as .NET 4.6 and .NET Standard 1.0/2.0.
-- But if you stay with .NET 3.5 you need to use the unofficial modified package like https://github.com/emikra/protobuf3-cs. 
-- The latest version (3.6.0) there is a patch note saying about some movement for this to work with .NET 3.5 and Unity (https://github.com/google/protobuf/blob/master/CHANGES.txt) I don't know if it works with 3.5 fully by now or not.
+3. Your generated class will then contains `using Google.Protobuf` usage, so additionally you have to add `Google.Protobuf.dll` precompiled library in your Unity project or link to your `asmdef`. This plugin itself doesn't need it, and I didn't bundle the `dll` along with this. You can go to [the repo](https://github.com/protocolbuffers/protobuf) and compile manually or download the Nuget package here https://www.nuget.org/packages/Google.Protobuf then use archive extract tools to get the .dll out. It contains targets such as .NET 4.6 and .NET Standard 1.0/2.0. Then it will ask for `System.Memory.dll` because it want to use `Span` class but Unity is not supporting it yet. By also [downloading it](https://www.nuget.org/packages/System.Memory/), it will then ask for missing references `System.Runtime.CompilerServices.Unsafe` and `System.Buffers`. To prevent you having to fetch missing `dll` over and over in chains, you can uncheck "Validate References" on the `System.Memory.dll`. Usually skipping the validation is bad, as if Protobuf ended up using the area of code in `System.Memory.dll` that needs them and could not dynamically link, then it probably crash. But so far seems like it is not the case.
 
 ## How to use Google-made well known types
 
@@ -186,7 +182,7 @@ If you want to see what the JSON string looks like, here is one example of `.For
 
 ## Node JS example
 
-Here's an example how to setup Node's `Crypto` so it decrypts what C# encrypted. Assuming you have already got a Node `Buffer` of your save data at the server : 
+Here's an example how to setup Node's `Crypto` so it decrypts what C# encrypted. I used this pattern in my Firebase Functions where it spin up Node server with a lambda code fragment, receiving the save file for safekeeping and at the same time decipher it so server knows the save file's content. Assuming you have already got a Node `Buffer` of your save data at the server as `content` : 
 
 ```js
 function decipher(saveBuffer)
@@ -213,9 +209,10 @@ function decipher(saveBuffer)
 }
 ```
 
-## Repeated enum bug?
+## Bugs?
 
-It works serializing at C# and deserializing at C# just fine. But if you get `Unhandled error { AssertionError: Assertion failed` when trying to turn the buffer made from C# into JS object, it may be [this bug from a year ago](https://github.com/protocolbuffers/protobuf/issues/5232). I just encountered it in protobuf 3.10.0 (October 2019). Adding `[packed=false]` does not fix the issue for me.
+- `repeated` enum : It works serializing at C# and deserializing at C# just fine. But if you get `Unhandled error { AssertionError: Assertion failed` when trying to turn the buffer made from C# into JS object, it may be [this bug from a year ago](https://github.com/protocolbuffers/protobuf/issues/5232). I just encountered it in protobuf 3.10.0 (October 2019). Adding `[packed=false]` does not fix the issue for me.
+- Integer map with key 0. I found a bug where `map<int, Something>` works in C# but fail to deserialize in JS. As long as [this](https://github.com/protocolbuffers/protobuf/issues/7713) is not fixed, use number other than 0 for your integer-keyed `map`.
 
 # License
 

@@ -8,12 +8,13 @@ using UnityEngine;
 namespace E7.Protobuf
 {
     /// <summary>
-    /// Pure utility version of <see cref="ProtoBinaryManager{PROTO, SELF}">.
+    /// Pure utility version of <see cref="ProtoBinaryManager{PROTO, SELF}"/>.
     /// </summary>
     public static class ProtoBinaryManager
     {
         /// <summary>
-        /// Pick up 16 bytes IV from the front of cipher text, use it together with <paramref name="key"> to AES parse the protobuf stream.
+        /// Pick up 16 bytes IV from the front of cipher text, use it together with <paramref name="key"/>
+        /// to AES parse the protobuf stream.
         /// </summary>
         /// <typeparam name="P">Your protobuf type here.</typeparam>
         public static P ProtoFromStream<P>(Stream stream, byte[] key) 
@@ -32,12 +33,11 @@ namespace E7.Protobuf
 
             //Debug.Log($"Using {string.Join(",", aes.Key.Select(x => x))} {string.Join(",", aes.IV.Select(x => x))}");
 
-            P loadedData = new P();
             using (var cryptoStream = new CryptoStream(stream, aes.CreateDecryptor(), CryptoStreamMode.Read))
             {
                 using (Google.Protobuf.CodedInputStream cis = new Google.Protobuf.CodedInputStream(cryptoStream))
                 {
-                    loadedData = new MessageParser<P>(() => new P()).ParseFrom(cis);
+                    var loadedData = new MessageParser<P>(() => new P()).ParseFrom(cis);
                     // using (MemoryStream ms = new MemoryStream())
                     // {
                     //     using (Google.Protobuf.CodedOutputStream cos = new CodedOutputStream(ms))
@@ -54,7 +54,8 @@ namespace E7.Protobuf
         }
 
         /// <summary>
-        /// A shortcut for <see cref="ProtoFromStream{P}(Stream, byte[])"> then <see cref="StreamToFile(MemoryStream, string, string)">.
+        /// A shortcut for <see cref="ProtoFromStream{P}(Stream, byte[])"/> then
+        /// <see cref="StreamToFile(MemoryStream, string, string)"/>.
         /// </summary>
         public static void ProtoToFile<P>(P save, byte[] key, string saveFolderAbsolute, string fileNameWithExtension)
             where P : IMessage<P>, new()
@@ -62,7 +63,7 @@ namespace E7.Protobuf
 
 
         /// <summary>
-        /// The <paramref name="memStream"> probably should came from <see cref="ProtoToStream{P}(P, byte[])">.
+        /// The <paramref name="memStream"/> probably should came from <see cref="ProtoToStream{P}(P, byte[])"/>.
         /// Automatically dispose the stream after it is done.
         /// </summary>
         public static void StreamToFile(MemoryStream memStream, string saveFolderAbsolute, string fileNameWithExtension)
@@ -79,7 +80,7 @@ namespace E7.Protobuf
         }
 
         /// <summary>
-        /// Applies basic AES encryption with the provided <paramref name="key">, with generated IV
+        /// Applies basic AES encryption with the provided <paramref name="key"/>, with generated IV
         /// pasted in front of cipher text, before writing to the disk.
         /// </summary>
         /// <typeparam name="P">Your protobuf type here.</typeparam>
@@ -90,6 +91,8 @@ namespace E7.Protobuf
             AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
             aes.Key = key;
             aes.GenerateIV();
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
             // Debug.Log(aes.BlockSize);
             // Debug.Log(aes.KeySize);
             // Debug.Log(aes.FeedbackSize);
@@ -159,7 +162,7 @@ namespace E7.Protobuf
         /// Useful in unit testing. You could have a sample of old version saves from player and test your compatibility with them.
         /// Or just a way to setup the test for specific scenario you want to check out.
         /// 
-        /// Do not include `Assets` or leading slash in the <paramref name="path">.
+        /// Do not include `Assets` or leading slash in the <paramref name="path"/>.
         /// </summary>
         public static PROTO ProtoFromProject<PROTO>(byte[] key, string path, string nameWithExtension) where PROTO : IMessage<PROTO>, new()
             => ProtoFromFile<PROTO>(key, $"{Application.dataPath}/{path}", nameWithExtension);
