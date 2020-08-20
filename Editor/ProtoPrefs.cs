@@ -90,6 +90,9 @@ namespace E7.Protobuf
             }
         }
 
+        // internal static bool uniqueNameToDirectory { get; set; }
+        internal static bool uniqueNameToDirectory => true;
+
 #if UNITY_2018_3_OR_NEWER
         internal class ProtobufUnitySettingsProvider : SettingsProvider
         {
