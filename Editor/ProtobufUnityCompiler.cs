@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 namespace E7.Protobuf {
     internal class ProtobufUnityCompiler : AssetPostprocessor {
@@ -34,7 +35,7 @@ namespace E7.Protobuf {
             }
         }
 
-        static bool anyChanges = false;
+        // static bool anyChanges = false;
 
         // static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
         //     string[] movedFromAssetPaths) {
@@ -81,7 +82,7 @@ namespace E7.Protobuf {
         //     }
         // }
 
-        internal static string RenameProto(string str) {
+        private static string RenameProto(string str) {
             var path = str;
             if (Path.GetExtension(str).Equals(".proto")) {
                 var prefix = Directory.GetParent(str).Name.ToLower();
@@ -98,6 +99,13 @@ namespace E7.Protobuf {
             }
 
             return path;
+        }
+
+        internal static void RemoveGeneratedFiles() {
+            var paths = IncludePaths;
+            foreach (var path in paths) {
+                UnityEngine.Debug.Log(path);
+            }
         }
 
 
