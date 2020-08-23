@@ -26,10 +26,13 @@ namespace E7.Protobuf {
             set { EditorPrefs.SetBool(prefLogStandard, value); }
         }
 
-        internal static bool uniqueNameToDirectory {
-            get { return EditorPrefs.GetBool(prefUniqueToDirectory, true); }
-            set { EditorPrefs.SetBool(prefUniqueToDirectory, value); }
-        }
+        // internal static bool uniqueNameToDirectory {
+        //     get { return EditorPrefs.GetBool(prefUniqueToDirectory, true); }
+        //     set { EditorPrefs.SetBool(prefUniqueToDirectory, value); }
+        // }        
+
+        // This is disabled until we create tooling that can also change the imported names in the *.proto files as well
+        internal static bool uniqueNameToDirectory => false;
 
         internal static string rawExcPath {
             get { return EditorPrefs.GetString(prefProtocExecutable, ""); }
@@ -105,21 +108,21 @@ namespace E7.Protobuf {
                 EditorGUILayout.Toggle(new GUIContent("Log Standard Output", "Log compilation completion messages."),
                     logStandard);
 
-            uniqueNameToDirectory =
-                EditorGUILayout.Toggle(
-                    new GUIContent("Set Unique To Directory",
-                        "Will make files unique to directory by using directory name as prefix, useful when working with protos with the same name."),
-                    uniqueNameToDirectory);
+            // uniqueNameToDirectory =
+            //     EditorGUILayout.Toggle(
+            //         new GUIContent("Set Unique To Directory",
+            //             "Will make files unique to directory by using directory name as prefix, useful when working with protos with the same name."),
+            //         uniqueNameToDirectory);
 
-            EditorGUILayout.Space();
-            
-            EditorGUILayout.HelpBox(
-                @"WARNING: This will delete all CS files in the same directory as your proto files, if you have non generated files in these directories they will also be deleted!",
-                MessageType.Warning);
-
-            if (GUILayout.Button(new GUIContent("Delete Code Gen Files"))) {
-                ProtobufUnityCompiler.RemoveGeneratedFiles();
-            }           
+            // EditorGUILayout.Space();
+            //
+            // EditorGUILayout.HelpBox(
+            //     @"WARNING: This will delete all CS files in the same directory as your proto files, if you have non generated files in these directories they will also be deleted!",
+            //     MessageType.Warning);
+            //
+            // if (GUILayout.Button(new GUIContent("Delete Code Gen Files"))) {
+            //     ProtobufUnityCompiler.RemoveGeneratedFiles();
+            // }           
             
             EditorGUILayout.Space();
             

@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Diagnostics;
-using Debug = UnityEngine.Debug;
 
 namespace E7.Protobuf {
     internal class ProtobufUnityCompiler : AssetPostprocessor {
@@ -93,8 +92,7 @@ namespace E7.Protobuf {
                 if (fileName != newName) {
                     path = str.Replace(fileName, newName);
                     var unityPath = str.Remove(0, Application.dataPath.Length - 6);
-                    UnityEngine.Debug.Log(unityPath);
-                    UnityEngine.Debug.Log(AssetDatabase.RenameAsset(unityPath, newName));
+                    AssetDatabase.RenameAsset(unityPath, newName);
                 }
             }
 
