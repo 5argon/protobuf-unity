@@ -6,13 +6,31 @@ Do you want to integrate [protobuf](https://github.com/google/protobuf) as a dat
 
 # Installation 
 
-1. Install `protoc` on the machine. This plugin does not include `protoc` command and will try to run it from your command line (via .NET `System.Diagnostics.Process.Start`). Please see https://github.com/google/protobuf and install it. Confirm with `protoc --version` in your command prompt/terminal.
+1. Install `protoc` on the machine. This plugin does not include `protoc` command and will try to run it from your command line (via .NET `System.Diagnostics.Process.Start`). Please see https://github.com/google/protobuf and install it. Confirm with `protoc --version` in your command prompt/terminal. Note that the version of `protoc` you use will depend on how high the C# [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) library you want to use because `protoc` may generate code that is not usable with older C# library. Later on this.
 2. Put files in your Unity project. This is also Unity Package Manager compatible. You can pull from online to your project directly.
 3. You can access the settings in Preferences > Protobuf. Here you *need* to put a path to your `protoc` executable.
 
 ![settings](.Documentation/images/settings.png)
 
 As soon as you import/reimport/modify (but *not* moving) `.proto` file in your project, it will compile *only that file* to the same location as the file. If you want to temporary stop this there is a checkbox in the settings, then you can manually push the button in there if you like. Note that deleting `.proto` file will *not* remove its generated class.
+
+## Installing `Google.Protobuf` C# Library
+
+The next problem is that your generated classes references external library [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) that you need to also include in the game client so it is able to serialize to Protobuf binary. Not only that, `protobuf-unity` itself also has Runtime assembly which has additional Protobuf toolings. So both your assembly definition (`.asmdef`) that your generated classes resides and this package need `Google.Protobuf` C# library.
+
+It is **not bundled** with this repository. You should download [the Nuget package](https://www.nuget.org/packages/Google.Protobuf) then use archive extract tools to get the .dll out. It contains targets such as .NET 4.6 and .NET Standard 1.0/2.0 which you should choose mathcing your Project Settings.
+
+### Version Problems
+
+Over the years, this [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) requires more and more .NET dependencies that ultimately not included in Unity.
+
+For example, if it ask for `System.Memory.dll` because it want to use `Span` class but Unity is not supporting it yet, you may also [downloading it](https://www.nuget.org/packages/System.Memory/) and forcibly put in the project. Now that will also ask for missing references `System.Runtime.CompilerServices.Unsafe` [here](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/) and `System.Buffers` [here](https://www.nuget.org/packages/System.Buffers/).
+
+Note that the reason why these libraries aren't included in Unity is likely that something does not work or partially work but wrong behavior on some platforms that Unity is committing to. So it is best that you don't use anything in these libraries other than satisfying the `Google.Protobuf.dll`, and pray that `Google.Protobuf.dll` itself doesn't use something bad.
+
+### Alternate `Google.Protobuf` versions
+
+If you did find problem when forcibly including exotic .NET dll such as `System.Memory.dll`, you may want to downgrade the C# `Google.Protobuf.dll` and the `protoc` to match until it does not require the problematic dependencies anymore. I have listed several breakpoint version where the next one changes its requirement [here](https://github.com/5argon/protobuf-unity/issues/14#issuecomment-922265628).
 
 ## Grpc
 
@@ -26,8 +44,6 @@ Leave empty or like it is if you don't want to use gRPC
 1. When you write a `.proto` file normally you need to use the `protoc` command line to generate C# classes. This plugin automatically find all your `.proto` files in your Unity project, generate them all, and output respective class file at the same place as the `.proto` file. It automatically regenerate when you change any `.proto` file. If there is an error the plugin will report via the Console. 
 
 2. You could use `import` statement in your `.proto` file, which normally looks for all files in `--proto_path` folders input to the command line. (You cannot use relative path such as `../` in `import`) With protobuf-unity, `--proto_path` will be all parent folders of all `.proto` file in your Unity project *combined*. This way you can use `import` to refer to any `.proto` file within your Unity project. (They should not be in UPM package though, I used `Application.dataPath` as a path base and packages aren't in here.) Also, `google/protobuf/` path is usable. For example, utilizing [well-known types](https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/unittest_well_known_types.proto) or extending [custom options](https://developers.google.com/protocol-buffers/docs/proto#customoptions).
-
-3. Your generated class will then contains `using Google.Protobuf` usage, so additionally you have to add `Google.Protobuf.dll` precompiled library in your Unity project or link to your `asmdef`. This plugin itself doesn't need it, and I didn't bundle the `dll` along with this. You can go to [the repo](https://github.com/protocolbuffers/protobuf) and compile manually or download [the Nuget package](https://www.nuget.org/packages/Google.Protobuf) then use archive extract tools to get the .dll out. It contains targets such as .NET 4.6 and .NET Standard 1.0/2.0. Then it will ask for `System.Memory.dll` because it want to use `Span` class but Unity is not supporting it yet. By also [downloading it](https://www.nuget.org/packages/System.Memory/), it will then ask for missing references `System.Runtime.CompilerServices.Unsafe` [here](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/) and `System.Buffers` [here](https://www.nuget.org/packages/System.Buffers/). With all 4 libraries, it works in the real device just fine as far as I tested.
 
 ## How to use Google-made well known types
 
