@@ -127,10 +127,7 @@ namespace E7.Protobuf
 
                 ProcessStartInfo startInfo = new ProcessStartInfo()
                 {
-                    //FileName = ProtoPrefs.excPath, Arguments = finalArguments 
-                    WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
-                    FileName = @"powershell",
-                    Arguments = ProtoPrefs.excPath + " " + finalArguments
+                    FileName = ProtoPrefs.excPath, Arguments = finalArguments 
                 };
 
                 Process proc = new Process() { StartInfo = startInfo };
