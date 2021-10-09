@@ -63,9 +63,9 @@ namespace E7.Protobuf
             get
             {
                 string ret = EditorPrefs.GetString(prefProtocExecutable, "");
-                if (ret.StartsWith(".."))
-                    return Path.Combine(Application.dataPath, ret);
-                else
+                // if (ret.StartsWith(".."))
+                //     return Path.Combine(Application.dataPath, ret);
+                // else
                     return ret;
             }
             set
@@ -79,9 +79,9 @@ namespace E7.Protobuf
             get
             {
                 string ret = EditorPrefs.GetString(prefGrpcPath, "");
-                if (ret.StartsWith(".."))
-                    return Path.Combine(Application.dataPath, ret);
-                else
+                // if (ret.StartsWith(".."))
+                //     return Path.Combine(Application.dataPath, ret);
+                // else
                     return ret;
             }
             set

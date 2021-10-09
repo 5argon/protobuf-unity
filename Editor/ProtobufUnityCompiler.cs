@@ -125,7 +125,13 @@ namespace E7.Protobuf
                     UnityEngine.Debug.Log("Protobuf Unity : Final arguments :\n" + finalArguments);
                 }
 
-                ProcessStartInfo startInfo = new ProcessStartInfo() { FileName = ProtoPrefs.excPath, Arguments = finalArguments };
+                ProcessStartInfo startInfo = new ProcessStartInfo()
+                {
+                    //FileName = ProtoPrefs.excPath, Arguments = finalArguments 
+                    WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
+                    FileName = @"powershell",
+                    Arguments = ProtoPrefs.excPath + " " + finalArguments
+                };
 
                 Process proc = new Process() { StartInfo = startInfo };
                 proc.StartInfo.UseShellExecute = false;
