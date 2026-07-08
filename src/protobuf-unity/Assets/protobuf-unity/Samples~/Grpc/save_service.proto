@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package game.rpc;
+
+import "google/protobuf/timestamp.proto";
+
+// gRPC service sample.
+//
+// Unlike the "Save Data Schema" sample, this one is NOT dependency-free: when a
+// gRPC plugin path is set in Preferences > Protobuf, protoc emits a companion
+// `SaveServiceGrpc.cs` (client/server stubs) that references a gRPC runtime.
+// You must add that runtime yourself for the project to compile — see README.md.
+
+message SaveState {
+  string player_id = 1;
+  bytes blob = 2;
+}
+
+message LoadRequest {
+  string player_id = 1;
+}
+
+message SaveResponse {
+  bool ok = 1;
+  google.protobuf.Timestamp saved_at = 2;
+}
+
+message WorldEvent {
+  string kind = 1;
+  int64 sequence = 2;
+}
+
+service SaveService {
+  // Unary calls.
+  rpc Load(LoadRequest) returns (SaveState);
+  rpc Save(SaveState) returns (SaveResponse);
+
+  // Server streaming: the server pushes a stream of events for one request.
+  rpc SubscribeEvents(LoadRequest) returns (stream WorldEvent);
+}

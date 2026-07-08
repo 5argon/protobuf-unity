@@ -4,5 +4,22 @@
     "displayName": "Protobuf Unity",
     "version": "2.0.0",
     "unity": "6000.3",
-    "description": "Automatic .proto files compilation in Unity project to C# as you edit them, plus other Protobuf utilities related to Unity."
+    "description": "Automatic .proto files compilation in Unity project to C# as you edit them, plus other Protobuf utilities related to Unity.",
+    "samples": [
+        {
+            "displayName": "Save Data Schema",
+            "description": "A multi-file .proto graph across folders: imports, a shared package, well-known types, maps, oneof, enums, and more. Dependency-free (uses only the bundled Google.Protobuf).",
+            "path": "Samples~/SaveDataSchema"
+        },
+        {
+            "displayName": "gRPC Service",
+            "description": "A gRPC service definition (unary + server streaming) plus setup notes. Requires a gRPC runtime (grpc-dotnet + YetAnotherHttpHandler, or MagicOnion); not needed for plain serialization.",
+            "path": "Samples~/Grpc"
+        },
+        {
+            "displayName": "Split Compilation",
+            "description": "Two folders that compile with different C# output options via a per-folder ProtobufCsharpOptions asset: one generates internal classes, the other public.",
+            "path": "Samples~/SplitCompilation"
+        }
+    ]
 }

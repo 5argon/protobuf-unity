@@ -6,7 +6,28 @@ Do you want to integrate [protobuf](https://github.com/google/protobuf) as a dat
 
 # Installation 
 
-1. Install `protoc` on the machine. This plugin does not include `protoc` command and will try to run it from your command line (via .NET `System.Diagnostics.Process.Start`). Please see https://github.com/protocolbuffers/protobuf and install it. Confirm with `protoc --version` in your command prompt/terminal. Note that the version of `protoc` you use will depend on how high the C# [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) library you want to use because `protoc` may generate code that is not usable with older C# library. Later on this.
+1. Install `protoc` on the machine. This plugin does not include the `protoc` command and will try to run it from your command line (via .NET `System.Diagnostics.Process.Start`). Note that the version of `protoc` you use will depend on how high the C# [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) library you want to use, because `protoc` may generate code that is not usable with an older C# library. More on this later.
+
+   **macOS** — with [Homebrew](https://brew.sh):
+
+   ```
+   brew install protobuf
+   ```
+
+   The Homebrew formula is called `protobuf`; it bundles the `protoc` executable. (If you also want the gRPC C# plugin for the gRPC field in the settings, `brew install grpc` provides `grpc_csharp_plugin`.)
+
+   **Windows** — with a package manager, either:
+
+   ```
+   choco install protoc      # Chocolatey
+   scoop install protobuf    # Scoop
+   ```
+
+   Or install manually: download `protoc-<version>-win64.zip` from the [protobuf releases page](https://github.com/protocolbuffers/protobuf/releases), extract it, and add its `bin` folder to your `PATH`.
+
+   **Any platform** — the [releases page](https://github.com/protocolbuffers/protobuf/releases) also has prebuilt `protoc` binaries you can just unzip and point at directly.
+
+   After installing, confirm with `protoc --version` in your terminal / command prompt. To find the exact path to paste into the plugin settings, run `which protoc` (macOS/Linux) or `where protoc` (Windows) — for example `/opt/homebrew/bin/protoc` on Apple Silicon, `/usr/local/bin/protoc` on Intel Macs, or something like `C:\ProgramData\chocolatey\bin\protoc.exe` on Windows.
 2. Add the package to your Unity project. It is Unity Package Manager compatible, so in **Window > Package Manager > + > Add package from git URL** paste:
 
    ```
@@ -20,35 +41,55 @@ Do you want to integrate [protobuf](https://github.com/google/protobuf) as a dat
 
 As soon as you import/reimport/modify (but *not* moving) `.proto` file in your project, it will compile *only that file* to the same location as the file. If you want to temporary stop this there is a checkbox in the settings, then you can manually push the button in there if you like. Note that deleting `.proto` file will *not* remove its generated class.
 
-## Installing `Google.Protobuf` C# Library
+## `Google.Protobuf` C# Library
 
-The next problem is that your generated classes references external library [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) that you need to also include in the game client so it is able to serialize to Protobuf binary. Not only that, `protobuf-unity` itself also has Runtime assembly which has additional Protobuf toolings. So both your assembly definition (`.asmdef`) that your generated classes resides and this package need `Google.Protobuf` C# library.
+Your generated classes reference the [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) runtime library to serialize to Protobuf binary, and this package's own Runtime assembly uses it too.
 
-It is **not bundled** with this repository. Download [the Nuget package](https://www.nuget.org/packages/Google.Protobuf) (a `.nupkg` is just a zip archive, so extract it with any archive tool) and grab the DLL from inside `lib/`. Pick the target framework that matches your **Api Compatibility Level** in Project Settings:
+**It comes bundled with this package** at `Plugin/Google.Protobuf.dll`, so it works out of the box — there is nothing to download, extract, or choose. The bundled DLL is auto-referenced, so generated classes in the default `Assembly-CSharp` pick it up automatically; if your generated `.cs` lives under its own `.asmdef`, just leave **Auto Referenced** on (or add `Google.Protobuf` to its references).
 
-- **.NET Standard 2.1** (the default profile on Unity 2021 LTS and later, including the current LTS): use the `lib/netstandard2.0/Google.Protobuf.dll`.
-- **.NET Framework 4.8** profile: the `lib/net45/Google.Protobuf.dll` also works.
+No extra dependency assemblies are needed either. On the current LTS the default **.NET Standard 2.1** profile provides `Span<T>`, `Memory<T>`, `System.Buffers`, and `System.Runtime.CompilerServices.Unsafe` in the platform BCL, so the bundled `netstandard2.0` DLL resolves everything against the runtime — no `System.Memory.dll` or other shim assemblies. (Confirmed upstream: the request for a Unity-specific `netstandard2.1` build was closed with *"later Unity versions work fine with the netstandard 2.0 version"* — [protocolbuffers/protobuf#9240](https://github.com/protocolbuffers/protobuf/issues/9240).)
 
-### Dependencies are no longer a problem on modern Unity
+### Using a different version (optional)
 
-Historically `Google.Protobuf` pulled in `System.Memory` (for `Span<T>`), which then dragged in `System.Runtime.CompilerServices.Unsafe` and `System.Buffers`, none of which Unity shipped. You had to hunt those DLLs down and force them into the project, fighting version mismatches along the way.
-
-This is fixed on the current LTS. Since Unity 2021 LTS the default Api Compatibility Level is **.NET Standard 2.1**, which bakes `Span<T>`, `Memory<T>`, `System.Buffers`, and `System.Runtime.CompilerServices.Unsafe` directly into the platform BCL. The `netstandard2.0` build of `Google.Protobuf` therefore resolves all of its references against the runtime — **drop in a single `Google.Protobuf.dll` and you are done.** No `System.Memory.dll` or other shim assemblies required.
-
-This is confirmed upstream: the protobuf issue that requested a dedicated `netstandard2.1` build *specifically for Unity* was closed with *"No longer applicable, later Unity versions work fine with the netstandard 2.0 version"* ([protocolbuffers/protobuf#9240](https://github.com/protocolbuffers/protobuf/issues/9240)).
-
-The old advice of downgrading `Google.Protobuf.dll` and `protoc` until the exotic dependencies went away is no longer necessary on modern Unity — you can pair a current `protoc` with a current `Google.Protobuf.dll`.
+The bundled DLL covers the common case. If you specifically need another `Google.Protobuf` version, replace `Plugin/Google.Protobuf.dll` with the `netstandard2.0` build from the [NuGet package](https://www.nuget.org/packages/Google.Protobuf) (a `.nupkg` is a zip; the DLL is under `lib/`). Keep your `protoc` version in step with it, since newer `protoc` output can require a newer runtime library.
 
 ### Looking ahead: CoreCLR / .NET 10
 
-Unity's [Path to CoreCLR](https://discussions.unity.com/t/path-to-coreclr-2026-upgrade-guide/1714279) replaces Mono with CoreCLR on a .NET 10 BCL in Unity 6.8, at which point .NET Standard 2.1 becomes the only exposed target framework. The `netstandard2.0` DLL remains consumable there, but once CoreCLR lands the cleanest option is the dependency-free `lib/net5.0/Google.Protobuf.dll`. In short, the trajectory keeps getting simpler, not harder.
+Unity's [Path to CoreCLR](https://discussions.unity.com/t/path-to-coreclr-2026-upgrade-guide/1714279) replaces Mono with CoreCLR on a .NET 10 BCL in Unity 6.8, at which point .NET Standard 2.1 becomes the only exposed target framework. The bundled `netstandard2.0` DLL remains consumable there; once CoreCLR lands you can optionally swap in the dependency-free `net5.0` build. In short, the trajectory keeps getting simpler, not harder.
 
-## Grpc
+## Samples
 
-1. Download [csharp grpc plugin](http://packages.nuget.org/api/v1/package/Grpc.tools) and put it somewhere safe.
-2. Set the path to this plugin in the editor shown above
+The package ships importable samples. With the package installed, open **Window > Package Manager**, select **Protobuf Unity**, and use the **Samples** tab's **Import** buttons:
 
-Leave empty or like it is if you don't want to use gRPC
+- **Save Data Schema** — a multi-file `.proto` graph across folders demonstrating imports, a shared package, well-known types, and proto3 features. Dependency-free; it only needs the bundled `Google.Protobuf`.
+- **gRPC Service** — a `service` definition (unary + server streaming) with setup notes. Requires a gRPC runtime (see below); not needed for plain serialization.
+- **Split Compilation** — two folders that generate C# with different `--csharp_opt` settings (one `internal`, one `public`) via a per-folder options asset.
+
+## C# output options
+
+Preferences > Protobuf has a **Global C# output options** group that maps to protoc's [`--csharp_opt`](https://protobuf.dev/reference/csharp/csharp-generated/#compiler_options) flag, applied to every compile:
+
+- **Global Internal Access** — generate types as `internal` instead of `public` (`internal_access`).
+- **Global Serializable** — add `[System.Serializable]` to generated message classes (`serializable`).
+- **Global File Extension** — extension for generated files; empty means the default `.cs`, and `.g.cs` is a common choice to mark generated code (`file_extension=`).
+- **Global Extra csharp_opt** — appended verbatim (comma-separated) for anything else, e.g. `base_namespace=Example`.
+
+Leave them at their defaults to get the standard `public` classes with `.cs` files.
+
+Note that these options are per-protoc-invocation, so e.g. **Internal Access** makes *every* generated type `internal` — protoc has no per-message switch.
+
+### Per-folder overrides
+
+To use different options for different folders, create an override asset: right-click a folder → **Create > Protobuf Unity > C# Output Options (per folder)**. Every `.proto` in that folder (and its subfolders, until a deeper override is found) then compiles with that asset's options **instead of** the global ones — each `.proto` is a separate protoc run. This lets you, for example, keep most schemas `public` while generating one folder's messages as `internal`. See the importable **Split Compilation** sample.
+
+## gRPC
+
+gRPC is **optional** — you only need it if your `.proto` files declare `service` blocks. When the **Path to grpc** setting is populated, `protoc` also runs the C# gRPC generator and emits a `*Grpc.cs` next to each service file. Leave it empty to skip gRPC entirely; service blocks are then ignored and only message types generate.
+
+1. Get the `grpc_csharp_plugin` executable from the [`Grpc.Tools`](https://www.nuget.org/packages/Grpc.Tools) NuGet package (a `.nupkg` is a zip; the binaries are under `tools/<platform>/`). Match its version to your `protoc`.
+2. Set **Path to grpc** in Preferences > Protobuf to that executable.
+
+The generated `*Grpc.cs` stubs need a gRPC **runtime**, which this package does **not** bundle (it's an app-specific, opt-in choice). Note that the old native `Grpc.Core` library is deprecated and end-of-life — Google dropped Unity support, so don't start with it. The current path is the managed **grpc-dotnet** (`Grpc.Net.Client`) plus an HTTP/2 handler for Unity/IL2CPP such as [Cysharp/YetAnotherHttpHandler](https://github.com/Cysharp/YetAnotherHttpHandler), or the higher-level [MagicOnion](https://github.com/Cysharp/MagicOnion) framework. See the importable **gRPC Service** sample for details.
 
 # Overview
 
@@ -152,42 +193,6 @@ LocalSave.Save();
 LocalSave.Manager.BackupActive();
 LocalSave.Manager.ReloadActive();
 ```
-
-# Special post processor by custom options (WIP)
-
-There are some problems with Protobuf-generated C# code that I am not quite content with : 
-
-- The generated properties are all `public get` and `public set`, this maybe not desirable. For example your `Gem` property could be modified by everyone and that's bug-prone. You probably prefer some kind of `PurchaseWithGem(iapItem)` method in your `partial` that decreases your `Gem` and keep the setter `private`.
-- The class contains `partial`, I would like to use `partial` feature and don't want to make a completely new class as a wrapper to this protobuf-generated class. It would be easier to handle the serialization and data management. Also I don't want to redo all the protobuf-generated utility methods like `MergeFrom` or deep `Clone`.
-- Some fields in `proto` like `map` are useful as Unity couldn't even serialize `Dictionary` properly, but it is even more likely than normal fields that you don't want anyone to access this freely and add things to it. Imagine a `map<string,string>` describing friend's UID code to the string representation of `DateTime` of when they last online. It doesn't make sense to allow access to this map because `string` doesn't make sense. You want it completely `private` then write a method accessor like `RememberLastOnline(friend, dateTime)` to modify its value, and potentially call the save method to write to disk at the same time.
-- These unwanted accessors show up in your intellisense and you don't want to see them.
-
-So I want some more control over the generated C# classes. One could utilize the [Compiler Plugin feature](https://protobuf.dev/reference/other/#plugins), but I think it is overkill. I think I am fine with just some dumb RegEx replace over generated C# classes in Unity as a 2nd pass.
-
-The next problem is how to select some fields or message to be triggered by this post-processing. It will be by [custom options feature](https://protobuf.dev/programming-guides/proto3/#customoptions). In the folder `Runtime/CustomOptions`, there is a `protobuf_unity_custom_options.proto` file that extends the options to Protobuf.
-
-- If you use protobuf-unity by copying the whole thing into your project, it will be in your `import` scope already, plus protobuf-unity will generate its C# counterpart.
-- If you use protobuf-unity via UPM include, I don't want to deal with path resolving to the package location so `protoc` knows where the `protobuf_unity_custom_options.proto` is. A solution is just copy this `.proto` file to your project. protobuf-unity will then generate its C# file again locally in your project. protobuf-unity has an exception that it will not generate C# script for `.proto` coming from packages.
-
-You then use `import "protobuf_unity_custom_options.proto";` on the head of `.proto` file that you want to use the custom options. The generated C# file of this class of yours, will then have a reference to the C# file of `protobuf_unity_custom_options.proto` (namely `ProtobufUnityCustomOptions.cs`)
-
-Right now this custom options gives you 1 message option `private_message` and 1 field option `private`. Unfortunately I think options can't be just a flag, so they are boolean and you have to set them to `true`.
-
-```protobuf
-syntax = "proto3";
-import "enums.proto";
-import "protobuf_unity_custom_options.proto";
-
-message PlayerData {
-
-    option (private_message) = true; // Using message option
-
-    string player_id = 1;
-    string display_name = 2 [(private)=true]; // Using field option
-}
-```
-
-`private` would apply tighter accessor to only one field, `private_message` apply to all fields in the message. But yeah, I didn't work on that yet. I just want to write these documentation as I code. :P
 
 # Interoperate with games backend
 

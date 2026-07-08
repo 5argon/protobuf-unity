@@ -122,6 +122,13 @@ namespace E7.Protobuf
 
                 string finalArguments = string.Format("\"{0}\"", protoFileSystemPath) + string.Format(options, outputPath);
 
+                // C# codegen options (--csharp_opt). Appended after the string.Format above so the
+                // option values are never interpreted as format placeholders. A per-folder
+                // ProtobufCsharpOptions asset (if any) overrides the global settings.
+                string csharpOpt = ResolveCsharpOpt(protoFileSystemPath);
+                if (!string.IsNullOrEmpty(csharpOpt))
+                    finalArguments += $" --csharp_opt={csharpOpt}";
+
                 if (ProtoPrefs.logStandard)
                 {
                     UnityEngine.Debug.Log("Protobuf Unity : Final arguments :\n" + finalArguments);
@@ -155,6 +162,63 @@ namespace E7.Protobuf
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Resolves the --csharp_opt value for a proto: the nearest-ancestor
+        /// <see cref="ProtobufCsharpOptions"/> asset if one exists, otherwise the global settings.
+        /// </summary>
+        private static string ResolveCsharpOpt(string protoFileSystemPath)
+        {
+            string protoAssetPath = ToAssetPath(protoFileSystemPath);
+            if (protoAssetPath != null)
+            {
+                ProtobufCsharpOptions folderOptions = FindNearestFolderOptions(protoAssetPath);
+                if (folderOptions != null)
+                {
+                    return folderOptions.BuildCsharpOpt();
+                }
+            }
+            return ProtoPrefs.BuildCsharpOpt();
+        }
+
+        /// <summary>
+        /// Converts an absolute file path under the project to an "Assets/..." asset path,
+        /// or null if it is not inside the project's Assets folder.
+        /// </summary>
+        private static string ToAssetPath(string absolute)
+        {
+            absolute = absolute.Replace('\\', '/');
+            string dataPath = Application.dataPath.Replace('\\', '/'); // ".../Assets"
+            string projectRoot = dataPath.Substring(0, dataPath.Length - "Assets".Length); // ".../"
+            return absolute.StartsWith(projectRoot) ? absolute.Substring(projectRoot.Length) : null;
+        }
+
+        /// <summary>
+        /// Finds the <see cref="ProtobufCsharpOptions"/> asset in the deepest ancestor folder of
+        /// <paramref name="protoAssetPath"/> (including its own folder), or null if none applies.
+        /// </summary>
+        private static ProtobufCsharpOptions FindNearestFolderOptions(string protoAssetPath)
+        {
+            string protoDir = Path.GetDirectoryName(protoAssetPath).Replace('\\', '/');
+            ProtobufCsharpOptions best = null;
+            int bestDepth = -1;
+            foreach (string guid in AssetDatabase.FindAssets("t:ProtobufCsharpOptions"))
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                string assetDir = Path.GetDirectoryName(assetPath).Replace('\\', '/');
+                bool isAncestorOrSame = protoDir == assetDir || protoDir.StartsWith(assetDir + "/");
+                if (isAncestorOrSame && assetDir.Length > bestDepth)
+                {
+                    ProtobufCsharpOptions loaded = AssetDatabase.LoadAssetAtPath<ProtobufCsharpOptions>(assetPath);
+                    if (loaded != null)
+                    {
+                        best = loaded;
+                        bestDepth = assetDir.Length;
+                    }
+                }
+            }
+            return best;
         }
     }
 }

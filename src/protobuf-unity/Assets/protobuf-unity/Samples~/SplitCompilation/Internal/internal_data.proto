@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package splitdemo.intern;
+
+// This folder contains a ProtobufCsharpOptions asset with Internal Access = on,
+// so THIS file is compiled with --csharp_opt=internal_access and the generated
+// `InternalData` class is `internal` — even though the file in ../Public is public.
+message InternalData {
+  string secret = 1;
+  int64 amount = 2;
+}

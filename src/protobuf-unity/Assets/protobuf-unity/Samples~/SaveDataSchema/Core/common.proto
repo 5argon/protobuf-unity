@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+// A single package shared by EVERY file in this sample. A package spans multiple
+// files, guards against name clashes, and — in C# — becomes the namespace
+// (`game.save` -> `Game.Save`). You could override it with
+// `option csharp_namespace = "..."`, but leaving it off lets the package drive
+// the namespace, which is exactly what this sample demonstrates.
+// https://protobuf.dev/programming-guides/proto3/#packages
+package game.save;
+
+// ---- Enums ----
+
+enum Rarity {
+  // proto3 enums must have a zero value, which is the default.
+  RARITY_UNSPECIFIED = 0;
+  RARITY_COMMON = 1;
+  RARITY_RARE = 2;
+  RARITY_EPIC = 3;
+  RARITY_LEGENDARY = 4;
+
+  // Retired numbers/names are reserved so a future edit can't reuse them.
+  reserved 5, 6;
+  reserved "RARITY_MYTHIC";
+}
+
+// allow_alias lets two names map to the same number (handy while renaming).
+enum Element {
+  option allow_alias = true;
+  ELEMENT_UNSPECIFIED = 0;
+  ELEMENT_FIRE = 1;
+  ELEMENT_FLAME = 1;   // alias of ELEMENT_FIRE
+  ELEMENT_ICE = 2;
+}
+
+// ---- Common messages ----
+
+message Vector3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+// A color packed as 0xRRGGBBAA.
+message Color32 {
+  uint32 rgba = 1;
+}
+
+// Shows the fuller set of proto3 scalar types and where each one fits.
+message Blob {
+  bytes payload = 1;         // arbitrary binary data
+  double precise_value = 2;  // 64-bit float
+  sint32 signed_delta = 3;   // zig-zag: compact for values that are often negative
+  fixed64 content_hash = 4;  // fixed 8 bytes: efficient for large/random numbers
+  sfixed32 fixed_signed = 5;
+}

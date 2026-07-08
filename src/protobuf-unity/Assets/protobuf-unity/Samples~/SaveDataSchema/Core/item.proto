@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package game.save;
+
+// `import public` re-exports common.proto's definitions to anyone who imports
+// THIS file. So player.proto (below) can use Rarity / Vector3 / Color32 by
+// importing only item.proto, without importing common.proto itself.
+// https://protobuf.dev/programming-guides/proto3/#importing-definitions
+import public "common.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message Item {
+  string id = 1;
+  string display_name = 2;
+  Rarity rarity = 3;                          // same package -> simple name
+  uint32 stack_count = 4;
+
+  google.protobuf.Timestamp acquired_at = 5;  // different package -> fully qualified
+
+  // Two ways to model "maybe unset":
+  google.protobuf.Int32Value durability = 6;  // wrapper message
+  optional int32 socket_count = 7;            // proto3 explicit presence -> HasSocketCount
+
+  bytes icon_png = 8;
+  Element element = 9;
+
+  // map -> IDictionary in the generated C#.
+  map<string, float> stat_modifiers = 10;
+
+  message Enchantment {
+    string name = 1;
+    int32 level = 2;
+    Color32 glow = 3;
+  }
+  repeated Enchantment enchantments = 11;
+
+  // oneof: at most one of these is set at a time.
+  oneof binding {
+    bool bind_on_pickup = 12;
+    string bound_to_player_id = 13;
+  }
+
+  reserved 14, 15;
+  reserved "legacy_soulbound";
+}

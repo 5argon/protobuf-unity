@@ -11,6 +11,10 @@ namespace E7.Protobuf
         internal static readonly string prefGrpcPath = "ProtobufUnity_GrpcPath";
         internal static readonly string prefLogError = "ProtobufUnity_LogError";
         internal static readonly string prefLogStandard = "ProtobufUnity_LogStandard";
+        internal static readonly string prefCsInternalAccess = "ProtobufUnity_CsInternalAccess";
+        internal static readonly string prefCsSerializable = "ProtobufUnity_CsSerializable";
+        internal static readonly string prefCsFileExtension = "ProtobufUnity_CsFileExtension";
+        internal static readonly string prefCsExtraOptions = "ProtobufUnity_CsExtraOptions";
         internal static bool enabled
         {
             get
@@ -90,6 +94,41 @@ namespace E7.Protobuf
             }
         }
 
+        // C# codegen options passed to protoc via --csharp_opt.
+        // https://protobuf.dev/reference/csharp/csharp-generated/#compiler_options
+
+        internal static bool csInternalAccess
+        {
+            get => EditorPrefs.GetBool(prefCsInternalAccess, false);
+            set => EditorPrefs.SetBool(prefCsInternalAccess, value);
+        }
+
+        internal static bool csSerializable
+        {
+            get => EditorPrefs.GetBool(prefCsSerializable, false);
+            set => EditorPrefs.SetBool(prefCsSerializable, value);
+        }
+
+        internal static string csFileExtension
+        {
+            get => EditorPrefs.GetString(prefCsFileExtension, "");
+            set => EditorPrefs.SetString(prefCsFileExtension, value);
+        }
+
+        internal static string csExtraOptions
+        {
+            get => EditorPrefs.GetString(prefCsExtraOptions, "");
+            set => EditorPrefs.SetString(prefCsExtraOptions, value);
+        }
+
+        /// <summary>
+        /// Builds the value for protoc's <c>--csharp_opt</c> flag from the global settings,
+        /// or an empty string when nothing is configured. Per-folder overrides live in
+        /// <see cref="ProtobufCsharpOptions"/> assets.
+        /// </summary>
+        internal static string BuildCsharpOpt()
+            => ProtobufCsharpOptions.BuildCsharpOpt(csInternalAccess, csSerializable, csFileExtension, csExtraOptions);
+
         internal class ProtobufUnitySettingsProvider : SettingsProvider
         {
             public ProtobufUnitySettingsProvider(string path, SettingsScope scope = SettingsScope.User)
@@ -126,6 +165,23 @@ namespace E7.Protobuf
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Path to grpc", GUILayout.Width(100));
             grpcPath = EditorGUILayout.TextField(grpcPath, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Global C# output options (--csharp_opt)", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Defaults for every .proto. To override per folder, create a \"Protobuf Unity/C# Output Options (per folder)\" asset in that folder — it replaces these for .proto files under it.", MessageType.None);
+
+            csInternalAccess = EditorGUILayout.Toggle(new GUIContent("Global Internal Access", "Generate types with the 'internal' access modifier instead of 'public'."), csInternalAccess);
+            csSerializable = EditorGUILayout.Toggle(new GUIContent("Global Serializable", "Add the [System.Serializable] attribute to generated message classes."), csSerializable);
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(new GUIContent("Global File Extension", "Extension for generated files. Empty uses the default '.cs'; a common alternative is '.g.cs' to mark generated code."), GUILayout.Width(140));
+            csFileExtension = EditorGUILayout.TextField(csFileExtension, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(new GUIContent("Global Extra csharp_opt", "Appended verbatim (comma-separated) to --csharp_opt, e.g. base_namespace=Example."), GUILayout.Width(140));
+            csExtraOptions = EditorGUILayout.TextField(csExtraOptions, GUILayout.ExpandWidth(true));
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();

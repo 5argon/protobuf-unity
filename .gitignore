@@ -21,3 +21,11 @@
 .DS_Store
 .vs/
 .idea/
+
+# Unity package samples live in a folder literally named `Samples~`. A global
+# ignore of `*~` (common for editor backup files) would otherwise swallow the
+# whole folder, so force it back in. Same for other Unity `~` package folders.
+!Samples~/
+!**/Samples~/
+!Documentation~/
+!**/Documentation~/

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package game.save;
+
+// player.proto is in the same folder; common.proto is imported across folders
+// (from ../Core) for Vector3.
+import "player.proto";
+import "common.proto";
+import "google/protobuf/any.proto";
+
+message WorldSnapshot {
+  string world_id = 1;
+  repeated PlayerSave players = 2;
+  map<string, Region> regions = 3;
+
+  // Any packs an arbitrary message type, resolved at runtime.
+  repeated google.protobuf.Any pending_events = 4;
+
+  message Region {
+    string name = 1;
+    Vector3 origin = 2;
+    Biome biome = 3;
+  }
+
+  enum Biome {
+    BIOME_UNSPECIFIED = 0;
+    BIOME_FOREST = 1;
+    BIOME_DESERT = 2;
+    BIOME_TUNDRA = 3;
+  }
+}
+
+// NOTE: a `service { rpc ... }` block is intentionally NOT included here.
+// If a gRPC plugin path is set in Preferences > Protobuf, protoc would emit a
+// companion `*Grpc.cs` that references the gRPC runtime (`Grpc.Core.Api`), which
+// this package does not bundle — so it would fail to compile on its own. gRPC is
+// an opt-in choice (grpc-dotnet + Cysharp/YetAnotherHttpHandler, or MagicOnion);
+// see the repo README's gRPC section.

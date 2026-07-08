@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package splitdemo.pub;
+
+// This folder has no ProtobufCsharpOptions asset, so this file compiles with the
+// GLOBAL options from Preferences > Protobuf. With the defaults, the generated
+// `PublicData` class is `public`.
+message PublicData {
+  string id = 1;
+  int32 value = 2;
+}

@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package game.save;
+
+// Cross-folder import: item.proto lives in ../Core but is referenced by bare
+// filename, because protobuf-unity puts every .proto's parent folder on protoc's
+// include path. And thanks to item.proto's `import public "common.proto"`, we get
+// Vector3 / Rarity here too WITHOUT importing common.proto directly.
+import "item.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+
+message PlayerSave {
+  string player_id = 1;
+  string display_name = 2;
+  uint64 experience = 3;
+  Vector3 position = 4;                 // from common.proto, via item.proto's public import
+
+  map<int32, Item> inventory = 5;       // map with a message value type
+  repeated Item equipped = 6;
+
+  // A nested type defined in another file is referenced as Outer.Inner.
+  repeated Item.Enchantment pending_enchantments = 7;
+
+  Stats stats = 8;
+
+  google.protobuf.Timestamp last_login = 9;
+  google.protobuf.Duration total_playtime = 10;
+
+  // Discriminated union of what the player is currently doing.
+  oneof current_activity {
+    Idle idle = 11;
+    Combat combat = 12;
+    Trading trading = 13;
+  }
+
+  // Free-form, forward-compatible blob (feature flags, event state, ...).
+  google.protobuf.Struct extra = 14;
+
+  message Stats {
+    int32 level = 1;
+    int32 health = 2;
+    int32 mana = 3;
+    map<string, int32> attributes = 4; // strength, agility, ...
+  }
+
+  message Idle {}
+
+  message Combat {
+    string enemy_id = 1;
+    Vector3 arena_center = 2;
+  }
+
+  message Trading {
+    string partner_player_id = 1;
+    repeated Item offered = 2;
+  }
+}
