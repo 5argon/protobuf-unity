@@ -1,0 +1,1505 @@
+### YamlMime:ManagedReference
+items:
+- uid: E7.Protobuf.ProtoBinaryManager`2
+  commentId: T:E7.Protobuf.ProtoBinaryManager`2
+  id: ProtoBinaryManager`2
+  parent: E7.Protobuf
+  children:
+  - E7.Protobuf.ProtoBinaryManager`2.#ctor
+  - E7.Protobuf.ProtoBinaryManager`2.Active
+  - E7.Protobuf.ProtoBinaryManager`2.ApplyToActive(`0)
+  - E7.Protobuf.ProtoBinaryManager`2.BackupActive
+  - E7.Protobuf.ProtoBinaryManager`2.BackupSuffix
+  - E7.Protobuf.ProtoBinaryManager`2.EncryptionIteration
+  - E7.Protobuf.ProtoBinaryManager`2.EncryptionPassword
+  - E7.Protobuf.ProtoBinaryManager`2.EncryptionSalt
+  - E7.Protobuf.ProtoBinaryManager`2.EncryptionScheme
+  - E7.Protobuf.ProtoBinaryManager`2.FromBase64(System.String)
+  - E7.Protobuf.ProtoBinaryManager`2.FromBytes(System.Byte[])
+  - E7.Protobuf.ProtoBinaryManager`2.FromStream(System.IO.Stream)
+  - E7.Protobuf.ProtoBinaryManager`2.InnerSaveFolder
+  - E7.Protobuf.ProtoBinaryManager`2.Load(System.String)
+  - E7.Protobuf.ProtoBinaryManager`2.LoadMain
+  - E7.Protobuf.ProtoBinaryManager`2.MainFileName
+  - E7.Protobuf.ProtoBinaryManager`2.Manager
+  - E7.Protobuf.ProtoBinaryManager`2.Migration(System.String)
+  - E7.Protobuf.ProtoBinaryManager`2.ReloadActive
+  - E7.Protobuf.ProtoBinaryManager`2.ResetActive
+  - E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup
+  - E7.Protobuf.ProtoBinaryManager`2.Save
+  - E7.Protobuf.ProtoBinaryManager`2.Save(`0)
+  - E7.Protobuf.ProtoBinaryManager`2.Save(`0,System.String)
+  - E7.Protobuf.ProtoBinaryManager`2.SaveFileExtension
+  - E7.Protobuf.ProtoBinaryManager`2.ToBase64(`0)
+  - E7.Protobuf.ProtoBinaryManager`2.ToBytes(`0)
+  - E7.Protobuf.ProtoBinaryManager`2.ToStream(`0)
+  - E7.Protobuf.ProtoBinaryManager`2.Validation(`0)
+  langs:
+  - csharp
+  - vb
+  name: ProtoBinaryManager<PROTO, SELF>
+  nameWithType: ProtoBinaryManager<PROTO, SELF>
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>
+  type: Class
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: This is a manager for dealing with local save file designed from Protobuf.
+  remarks: >-
+    However You can use it with just about any protobuf generated class that you want to write it to the disk.
+
+    But in the documentation I will refer to your proto data as "save file".
+
+
+    As you know protobuf generates a C# class with `partial`,
+
+    this manager connects to that loosely via type params and interface, 
+
+    no subclassing from that actual `partial` data class required.
+
+    Instead you subclass a specialized manager from this `abstract` class.
+
+
+    Tips : If you name your class as `LocalSave`, then you will be able to nicely type
+
+    `LocalSave.Save()` or `LocalSave.Manager` and do things.
+
+
+    **Active save** : an *in-memory* save *data* game is using via <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref>.
+
+    <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> loads a default save from disk called "main save file", or use a cached one if loaded already.
+
+
+    **Main save file** : a save *file* stored on *disk* with name <xref href="E7.Protobuf.ProtoBinaryManager%602.MainFileName" data-throw-if-not-resolved="false"></xref>.
+
+    Your active save became this file via <xref href="E7.Protobuf.ProtoBinaryManager%602.Save" data-throw-if-not-resolved="false"></xref>,
+
+
+    You could get a <code class="typeparamref">PROTO</code> from elsewhere
+
+    and use <xref href="E7.Protobuf.ProtoBinaryManager%602.ApplyToActive(%600)" data-throw-if-not-resolved="false"></xref> to set it as active.
+
+
+    Nowadays games are mostly single-save and autosaved, so it is convenient to keep overwriting the same file by default.
+
+    Many methods in this class was designed to deal with the active slot.
+  example: []
+  syntax:
+    content: 'public abstract class ProtoBinaryManager<PROTO, SELF> where PROTO : IMessage<PROTO>, new() where SELF : ProtoBinaryManager<PROTO, SELF>, new()'
+    typeParameters:
+    - id: PROTO
+      description: The type of your protobuf generated class.
+    - id: SELF
+      description: >-
+        Throw the name of your manager subclass itself into this type param
+            for `static` magic <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> and <xref href="E7.Protobuf.ProtoBinaryManager%602.Manager" data-throw-if-not-resolved="false"></xref> to happen.
+    content.vb: Public MustInherit Class ProtoBinaryManager(Of PROTO As {IMessage(Of PROTO), New}, SELF As {ProtoBinaryManager(Of PROTO, SELF), New})
+  inheritance:
+  - System.Object
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF)
+  name.vb: ProtoBinaryManager(Of PROTO, SELF)
+- uid: E7.Protobuf.ProtoBinaryManager`2.BackupSuffix
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.BackupSuffix
+  id: BackupSuffix
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: BackupSuffix
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.BackupSuffix
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.BackupSuffix
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Appended **before** the usual file name's extension for <xref href="E7.Protobuf.ProtoBinaryManager%602.BackupActive" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: protected virtual string BackupSuffix { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Protected Overridable ReadOnly Property BackupSuffix As String
+  overload: E7.Protobuf.ProtoBinaryManager`2.BackupSuffix*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).BackupSuffix
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).BackupSuffix
+- uid: E7.Protobuf.ProtoBinaryManager`2.MainFileName
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.MainFileName
+  id: MainFileName
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: MainFileName
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.MainFileName
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.MainFileName
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: A save file associated with <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> save data slot. This is without extension.
+  example: []
+  syntax:
+    content: protected virtual string MainFileName { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Protected Overridable ReadOnly Property MainFileName As String
+  overload: E7.Protobuf.ProtoBinaryManager`2.MainFileName*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).MainFileName
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).MainFileName
+- uid: E7.Protobuf.ProtoBinaryManager`2.SaveFileExtension
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.SaveFileExtension
+  id: SaveFileExtension
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: SaveFileExtension
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.SaveFileExtension
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.SaveFileExtension
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Default extension for files generated from this manager.
+  remarks: >-
+    This maybe important when your user has a problem, then you could tell him to look for
+
+    a file with certain extension and copy that out. So having an easily identifiable helps.
+  example: []
+  syntax:
+    content: protected virtual string SaveFileExtension { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Protected Overridable ReadOnly Property SaveFileExtension As String
+  overload: E7.Protobuf.ProtoBinaryManager`2.SaveFileExtension*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).SaveFileExtension
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).SaveFileExtension
+- uid: E7.Protobuf.ProtoBinaryManager`2.InnerSaveFolder
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.InnerSaveFolder
+  id: InnerSaveFolder
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: InnerSaveFolder
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.InnerSaveFolder
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.InnerSaveFolder
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: A folder continued from <xref href="UnityEngine.Application.persistentDataPath" data-throw-if-not-resolved="false"></xref> which the save file will be in.
+  remarks: Do not add ending slash. Use empty string to place the save file at persistent path root.
+  example: []
+  syntax:
+    content: protected virtual string InnerSaveFolder { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Protected Overridable ReadOnly Property InnerSaveFolder As String
+  overload: E7.Protobuf.ProtoBinaryManager`2.InnerSaveFolder*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).InnerSaveFolder
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).InnerSaveFolder
+- uid: E7.Protobuf.ProtoBinaryManager`2.Migration(System.String)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.Migration(System.String)
+  id: Migration(System.String)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: Migration(string)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Migration(string)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Migration(string)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    Specify what to do if the save file is found but throw <xref href="System.Security.Cryptography.CryptographicException" data-throw-if-not-resolved="false"></xref>
+
+    or <xref href="System.ArgumentException" data-throw-if-not-resolved="false"></xref> exception while loading it.
+  remarks: >-
+    Usually this is when you changed the save file's structure and the old key could no longer be used,
+
+    or hacker did something with the save file.
+  example: []
+  syntax:
+    content: protected virtual PROTO Migration(string problematicFilePathWithExtension)
+    parameters:
+    - id: problematicFilePathWithExtension
+      type: System.String
+    return:
+      type: '{PROTO}'
+    content.vb: Protected Overridable Function Migration(problematicFilePathWithExtension As String) As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager`2.Migration*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Migration(String)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Migration(String)
+  name.vb: Migration(String)
+- uid: E7.Protobuf.ProtoBinaryManager`2.Validation(`0)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.Validation(`0)
+  id: Validation(`0)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: Validation(PROTO)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Validation(PROTO)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Validation(PROTO)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Specify what to do after successfully loading each save from disk.
+  remarks: For example, you may try to prevent players hacking your local save file by further checking against saved hash here.
+  example: []
+  syntax:
+    content: protected virtual PROTO Validation(PROTO loadedSaveData)
+    parameters:
+    - id: loadedSaveData
+      type: '{PROTO}'
+    return:
+      type: '{PROTO}'
+    content.vb: Protected Overridable Function Validation(loadedSaveData As PROTO) As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager`2.Validation*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Validation(PROTO)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Validation(PROTO)
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionPassword
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.EncryptionPassword
+  id: EncryptionPassword
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: EncryptionPassword
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionPassword
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionPassword
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    A password string to derive into key,
+
+    for AES encoding in <xref href="E7.Protobuf.ProtoBinaryManager%602.FromStream(System.IO.Stream)" data-throw-if-not-resolved="false"></xref> and <xref href="E7.Protobuf.ProtoBinaryManager%602.ToStream(%600)" data-throw-if-not-resolved="false"></xref>,
+  remarks: >-
+    This is a getter property, if your game is completely client-side you can choose your own poison, for example : 
+
+    - Hard code it (e.g. `=> "My password is easily disassembled"`)
+
+    - Load it from an another static code, which is obfuscated.
+
+    - Make unmanaged call to non-C# code or DLL and get your stuff.
+
+
+    Protobuf encoding is not an encryption, the bit patterns are documented [here](https://developers.google.com/protocol-buffers/docs/encoding)
+
+
+    Also you could override both <xref href="E7.Protobuf.ProtoBinaryManager%602.FromStream(System.IO.Stream)" data-throw-if-not-resolved="false"></xref> and <xref href="E7.Protobuf.ProtoBinaryManager%602.ToStream(%600)" data-throw-if-not-resolved="false"></xref>
+
+    and provide your own algorithm.
+  example: []
+  syntax:
+    content: protected abstract string EncryptionPassword { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Protected MustOverride ReadOnly Property EncryptionPassword As String
+  overload: E7.Protobuf.ProtoBinaryManager`2.EncryptionPassword*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionPassword
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionPassword
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionSalt
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.EncryptionSalt
+  id: EncryptionSalt
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: EncryptionSalt
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionSalt
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionSalt
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    A salt string to derive into key,
+
+    for AES encoding in <xref href="E7.Protobuf.ProtoBinaryManager%602.FromStream(System.IO.Stream)" data-throw-if-not-resolved="false"></xref> and <xref href="E7.Protobuf.ProtoBinaryManager%602.ToStream(%600)" data-throw-if-not-resolved="false"></xref>,
+  remarks: >-
+    Note that usually salt should be regenerated and provided together with the cipher text.
+
+    The default implementation uses fixed salt without providing the salt along with the encrypted data,
+
+    so it kind of defeat the purpose other than making the KDF work.
+
+
+    If you want to do it properly, when you override those then you can use this property as generated salt 
+
+    then paste the salt along with the data.
+  example: []
+  syntax:
+    content: protected abstract string EncryptionSalt { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Protected MustOverride ReadOnly Property EncryptionSalt As String
+  overload: E7.Protobuf.ProtoBinaryManager`2.EncryptionSalt*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionSalt
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionSalt
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionIteration
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.EncryptionIteration
+  id: EncryptionIteration
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: EncryptionIteration
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionIteration
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionIteration
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    Iteration count for [PBKDF2](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.rfc2898derivebytes),
+
+    which turns your password and salt into an encryption key.
+  remarks: >-
+    The point of derivation is so that the key looks inhumanly random while coming from something human
+
+    like a password string.
+  example: []
+  syntax:
+    content: protected abstract int EncryptionIteration { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Protected MustOverride ReadOnly Property EncryptionIteration As Integer
+  overload: E7.Protobuf.ProtoBinaryManager`2.EncryptionIteration*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionIteration
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionIteration
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionScheme
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.EncryptionScheme
+  id: EncryptionScheme
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: EncryptionScheme
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionScheme
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionScheme
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Override to upgrade the key-derivation hash and AES key size.
+  example: []
+  syntax:
+    content: protected virtual ProtoEncryptionScheme EncryptionScheme { get; }
+    parameters: []
+    return:
+      type: E7.Protobuf.ProtoEncryptionScheme
+    content.vb: Protected Overridable ReadOnly Property EncryptionScheme As ProtoEncryptionScheme
+  overload: E7.Protobuf.ProtoBinaryManager`2.EncryptionScheme*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionScheme
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionScheme
+- uid: E7.Protobuf.ProtoBinaryManager`2.#ctor
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.#ctor
+  id: '#ctor'
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: ProtoBinaryManager()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ProtoBinaryManager()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ProtoBinaryManager()
+  type: Constructor
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  syntax:
+    content: public ProtoBinaryManager()
+    content.vb: Public Sub New()
+  overload: E7.Protobuf.ProtoBinaryManager`2.#ctor*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).New()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).New()
+  name.vb: New()
+- uid: E7.Protobuf.ProtoBinaryManager`2.Manager
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.Manager
+  id: Manager
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: Manager
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Manager
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Manager
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: This is an entry point to advanced methods.
+  example: []
+  syntax:
+    content: public static SELF Manager { get; }
+    parameters: []
+    return:
+      type: '{SELF}'
+    content.vb: Public Shared ReadOnly Property Manager As SELF
+  overload: E7.Protobuf.ProtoBinaryManager`2.Manager*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Manager
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Manager
+- uid: E7.Protobuf.ProtoBinaryManager`2.Active
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.Active
+  id: Active
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Active
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Active
+  type: Property
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    The manager gives you 1 special loaded in-memory save data slot by loading from the "main save file".
+
+    It automatically loads on using this property if not yet.
+  remarks: >-
+    If you don't want a reference to this assembly everywhere you use this property,
+
+    you could make a new `Active` in your subclass as `new`, like this :
+
+
+    <pre><code class="lang-csharp">public static new PlayerData Active =&gt; ProtoSaveManager&lt;YourData, YourSubclassName&gt;.Active;</code></pre>
+  example: []
+  syntax:
+    content: public static PROTO Active { get; }
+    parameters: []
+    return:
+      type: '{PROTO}'
+    content.vb: Public Shared ReadOnly Property Active As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager`2.Active*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Active
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Active
+- uid: E7.Protobuf.ProtoBinaryManager`2.Save
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.Save
+  id: Save
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: Save()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Save()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Save()
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: The easiest save method, which save the <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> save data to main save file.
+  example: []
+  syntax:
+    content: public static void Save()
+    content.vb: Public Shared Sub Save()
+  overload: E7.Protobuf.ProtoBinaryManager`2.Save*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Save()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Save()
+- uid: E7.Protobuf.ProtoBinaryManager`2.BackupActive
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.BackupActive
+  id: BackupActive
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: BackupActive()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.BackupActive()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.BackupActive()
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Backup the <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> save to a new backup file.
+  remarks: >-
+    You can use this as a safety net to backup occassionally
+
+    and in the case that the save corrupted (by your mistake or disk failure), at least your player could 
+
+    dig the backup and see if it works or not.
+
+
+    Or you could use the built-in <xref href="E7.Protobuf.ProtoBinaryManager%602.RestoreFromBackup" data-throw-if-not-resolved="false"></xref> to replace the active save memory with the backup.
+
+
+    TODO : Make this method backup incrementally as multiple files, with timestamp.
+  example: []
+  syntax:
+    content: public void BackupActive()
+    content.vb: Public Sub BackupActive()
+  overload: E7.Protobuf.ProtoBinaryManager`2.BackupActive*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).BackupActive()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).BackupActive()
+- uid: E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup
+  id: RestoreFromBackup
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: RestoreFromBackup()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.RestoreFromBackup()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.RestoreFromBackup()
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    Reload from the main backup file.
+
+
+    TODO : When backup could do multiple files, this should use the most recent one.
+  example: []
+  syntax:
+    content: public void RestoreFromBackup()
+    content.vb: Public Sub RestoreFromBackup()
+  overload: E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).RestoreFromBackup()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).RestoreFromBackup()
+- uid: E7.Protobuf.ProtoBinaryManager`2.ReloadActive
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.ReloadActive
+  id: ReloadActive
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: ReloadActive()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ReloadActive()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ReloadActive()
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Reload main save file into <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> slot, discarding all unsaved changes.
+  example: []
+  syntax:
+    content: public void ReloadActive()
+    content.vb: Public Sub ReloadActive()
+  overload: E7.Protobuf.ProtoBinaryManager`2.ReloadActive*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ReloadActive()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ReloadActive()
+- uid: E7.Protobuf.ProtoBinaryManager`2.FromBase64(System.String)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.FromBase64(System.String)
+  id: FromBase64(System.String)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: FromBase64(string)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.FromBase64(string)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.FromBase64(string)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: For example getting a save restore as a JSON sent from server.
+  example: []
+  syntax:
+    content: public PROTO FromBase64(string base64String)
+    parameters:
+    - id: base64String
+      type: System.String
+    return:
+      type: '{PROTO}'
+    content.vb: Public Function FromBase64(base64String As String) As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager`2.FromBase64*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).FromBase64(String)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).FromBase64(String)
+  name.vb: FromBase64(String)
+- uid: E7.Protobuf.ProtoBinaryManager`2.FromBytes(System.Byte[])
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.FromBytes(System.Byte[])
+  id: FromBytes(System.Byte[])
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: FromBytes(byte[])
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.FromBytes(byte[])
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.FromBytes(byte[])
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  syntax:
+    content: public PROTO FromBytes(byte[] saveBytes)
+    parameters:
+    - id: saveBytes
+      type: System.Byte[]
+    return:
+      type: '{PROTO}'
+    content.vb: Public Function FromBytes(saveBytes As Byte()) As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager`2.FromBytes*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).FromBytes(Byte())
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).FromBytes(Byte())
+  name.vb: FromBytes(Byte())
+- uid: E7.Protobuf.ProtoBinaryManager`2.ToBytes(`0)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.ToBytes(`0)
+  id: ToBytes(`0)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: ToBytes(PROTO)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ToBytes(PROTO)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ToBytes(PROTO)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: By default this returns AES encrypted protobuf bytes.
+  example: []
+  syntax:
+    content: public byte[] ToBytes(PROTO save)
+    parameters:
+    - id: save
+      type: '{PROTO}'
+    return:
+      type: System.Byte[]
+    content.vb: Public Function ToBytes(save As PROTO) As Byte()
+  overload: E7.Protobuf.ProtoBinaryManager`2.ToBytes*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ToBytes(PROTO)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ToBytes(PROTO)
+- uid: E7.Protobuf.ProtoBinaryManager`2.ToBase64(`0)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.ToBase64(`0)
+  id: ToBase64(`0)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: ToBase64(PROTO)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ToBase64(PROTO)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ToBase64(PROTO)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: If you want to put the entire save in JSON this is useful.
+  example: []
+  syntax:
+    content: public string ToBase64(PROTO save)
+    parameters:
+    - id: save
+      type: '{PROTO}'
+    return:
+      type: System.String
+    content.vb: Public Function ToBase64(save As PROTO) As String
+  overload: E7.Protobuf.ProtoBinaryManager`2.ToBase64*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ToBase64(PROTO)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ToBase64(PROTO)
+- uid: E7.Protobuf.ProtoBinaryManager`2.Save(`0)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.Save(`0)
+  id: Save(`0)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: Save(PROTO)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Save(PROTO)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Save(PROTO)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Save any save file to overwrite the main save file.
+  example: []
+  syntax:
+    content: public void Save(PROTO save)
+    parameters:
+    - id: save
+      type: '{PROTO}'
+    content.vb: Public Sub Save(save As PROTO)
+  overload: E7.Protobuf.ProtoBinaryManager`2.Save*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Save(PROTO)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Save(PROTO)
+- uid: E7.Protobuf.ProtoBinaryManager`2.Save(`0,System.String)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.Save(`0,System.String)
+  id: Save(`0,System.String)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: Save(PROTO, string)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Save(PROTO, string)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Save(PROTO, string)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Save any save file with custom name using the same extension your game had been using.
+  example: []
+  syntax:
+    content: public void Save(PROTO save, string fileNameWithoutExtension)
+    parameters:
+    - id: save
+      type: '{PROTO}'
+    - id: fileNameWithoutExtension
+      type: System.String
+    content.vb: Public Sub Save(save As PROTO, fileNameWithoutExtension As String)
+  overload: E7.Protobuf.ProtoBinaryManager`2.Save*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Save(PROTO, String)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Save(PROTO, String)
+  name.vb: Save(PROTO, String)
+- uid: E7.Protobuf.ProtoBinaryManager`2.FromStream(System.IO.Stream)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.FromStream(System.IO.Stream)
+  id: FromStream(System.IO.Stream)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: FromStream(Stream)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.FromStream(Stream)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.FromStream(System.IO.Stream)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    The default implementation picks up 16 bytes AES IV from the front of cipher text, 
+
+    use it together with a key derived from  <xref href="E7.Protobuf.ProtoBinaryManager%602.EncryptionPassword" data-throw-if-not-resolved="false"></xref>
+
+    and <xref href="E7.Protobuf.ProtoBinaryManager%602.EncryptionSalt" data-throw-if-not-resolved="false"></xref> to AES decode the protobuf stream.
+
+
+    You could override to something more sophisticated if you want.
+  example: []
+  syntax:
+    content: public virtual PROTO FromStream(Stream stream)
+    parameters:
+    - id: stream
+      type: System.IO.Stream
+    return:
+      type: '{PROTO}'
+    content.vb: Public Overridable Function FromStream(stream As Stream) As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager`2.FromStream*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).FromStream(Stream)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).FromStream(System.IO.Stream)
+- uid: E7.Protobuf.ProtoBinaryManager`2.ToStream(`0)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.ToStream(`0)
+  id: ToStream(`0)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: ToStream(PROTO)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ToStream(PROTO)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ToStream(PROTO)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    The default implementation applies basic AES encryption with a key
+
+    derived from <xref href="E7.Protobuf.ProtoBinaryManager%602.EncryptionPassword" data-throw-if-not-resolved="false"></xref> and <xref href="E7.Protobuf.ProtoBinaryManager%602.EncryptionSalt" data-throw-if-not-resolved="false"></xref>,
+
+    with generated IV pasted in front of cipher text, before writing to the disk.
+
+
+    You could override to something more sophisticated if you want.
+  example: []
+  syntax:
+    content: public virtual MemoryStream ToStream(PROTO save)
+    parameters:
+    - id: save
+      type: '{PROTO}'
+    return:
+      type: System.IO.MemoryStream
+    content.vb: Public Overridable Function ToStream(save As PROTO) As MemoryStream
+  overload: E7.Protobuf.ProtoBinaryManager`2.ToStream*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ToStream(PROTO)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ToStream(PROTO)
+- uid: E7.Protobuf.ProtoBinaryManager`2.LoadMain
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.LoadMain
+  id: LoadMain
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: LoadMain()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.LoadMain()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.LoadMain()
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Load and return the main save file. Its state may be behind of the current <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> save file.
+  remarks: >-
+    You could use this for progress comparison in the save overwriting dialog, for example.
+
+
+    If there is no save file, you get a fresh save instead of an exception. This fresh save is just `new`.
+
+
+    Protobuf generated `OnConstruction()` `partial` method for you to add your own custom logic,
+
+    which the constructor will call into.
+  example: []
+  syntax:
+    content: public PROTO LoadMain()
+    return:
+      type: '{PROTO}'
+    content.vb: Public Function LoadMain() As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager`2.LoadMain*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).LoadMain()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).LoadMain()
+- uid: E7.Protobuf.ProtoBinaryManager`2.Load(System.String)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.Load(System.String)
+  id: Load(System.String)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: Load(string)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Load(string)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Load(string)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    Load any save file in the <xref href="E7.Protobuf.ProtoBinaryManager%602.InnerSaveFolder" data-throw-if-not-resolved="false"></xref>.
+
+    Use <xref href="E7.Protobuf.ProtoBinaryManager%602.ApplyToActive(%600)" data-throw-if-not-resolved="false"></xref> to make the returned save data the <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> save.
+  example: []
+  syntax:
+    content: public PROTO Load(string fileNameWithoutExtension)
+    parameters:
+    - id: fileNameWithoutExtension
+      type: System.String
+    return:
+      type: '{PROTO}'
+    content.vb: Public Function Load(fileNameWithoutExtension As String) As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager`2.Load*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Load(String)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Load(String)
+  name.vb: Load(String)
+- uid: E7.Protobuf.ProtoBinaryManager`2.ApplyToActive(`0)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.ApplyToActive(`0)
+  id: ApplyToActive(`0)
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: ApplyToActive(PROTO)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ApplyToActive(PROTO)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ApplyToActive(PROTO)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Overwrite an <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> save slot with an arbitrary save data.
+  example: []
+  syntax:
+    content: public void ApplyToActive(PROTO save)
+    parameters:
+    - id: save
+      type: '{PROTO}'
+    content.vb: Public Sub ApplyToActive(save As PROTO)
+  overload: E7.Protobuf.ProtoBinaryManager`2.ApplyToActive*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ApplyToActive(PROTO)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ApplyToActive(PROTO)
+- uid: E7.Protobuf.ProtoBinaryManager`2.ResetActive
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.ResetActive
+  id: ResetActive
+  parent: E7.Protobuf.ProtoBinaryManager`2
+  langs:
+  - csharp
+  - vb
+  name: ResetActive()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ResetActive()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ResetActive()
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    A destructive operation that turn back the <xref href="E7.Protobuf.ProtoBinaryManager%602.Active" data-throw-if-not-resolved="false"></xref> save to clean state.
+
+    But it is only in active slot which is in your memory.
+
+    The main physical save file remains intact until you <xref href="E7.Protobuf.ProtoBinaryManager%602.Save" data-throw-if-not-resolved="false"></xref> it for real.
+  example: []
+  syntax:
+    content: public void ResetActive()
+    content.vb: Public Sub ResetActive()
+  overload: E7.Protobuf.ProtoBinaryManager`2.ResetActive*
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ResetActive()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ResetActive()
+references:
+- uid: E7.Protobuf.ProtoBinaryManager`2.Active
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.Active
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Active
+  name: Active
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Active
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Active
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Active
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Active
+- uid: E7.Protobuf.ProtoBinaryManager`2.MainFileName
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.MainFileName
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_MainFileName
+  name: MainFileName
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.MainFileName
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.MainFileName
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).MainFileName
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).MainFileName
+- uid: E7.Protobuf.ProtoBinaryManager`2.Save
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.Save
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Save
+  name: Save()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Save()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Save()
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Save()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Save()
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.Save
+    name: Save
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Save
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.Save
+    name: Save
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Save
+  - name: (
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager`2.ApplyToActive(`0)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.ApplyToActive(`0)
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ApplyToActive__0_
+  name: ApplyToActive(PROTO)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ApplyToActive(PROTO)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ApplyToActive(PROTO)
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ApplyToActive(PROTO)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ApplyToActive(PROTO)
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.ApplyToActive(`0)
+    name: ApplyToActive
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ApplyToActive__0_
+  - name: (
+  - name: PROTO
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.ApplyToActive(`0)
+    name: ApplyToActive
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ApplyToActive__0_
+  - name: (
+  - name: PROTO
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager`2.Manager
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.Manager
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Manager
+  name: Manager
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Manager
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Manager
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Manager
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Manager
+- uid: E7.Protobuf
+  commentId: N:E7.Protobuf
+  href: E7.html
+  name: E7.Protobuf
+  nameWithType: E7.Protobuf
+  fullName: E7.Protobuf
+  spec.csharp:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+  spec.vb:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: E7.Protobuf.ProtoBinaryManager`2.BackupActive
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.BackupActive
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_BackupActive
+  name: BackupActive()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.BackupActive()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.BackupActive()
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).BackupActive()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).BackupActive()
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.BackupActive
+    name: BackupActive
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_BackupActive
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.BackupActive
+    name: BackupActive
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_BackupActive
+  - name: (
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager`2.BackupSuffix*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.BackupSuffix
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_BackupSuffix
+  name: BackupSuffix
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.BackupSuffix
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.BackupSuffix
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).BackupSuffix
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).BackupSuffix
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: E7.Protobuf.ProtoBinaryManager`2.MainFileName*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.MainFileName
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_MainFileName
+  name: MainFileName
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.MainFileName
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.MainFileName
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).MainFileName
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).MainFileName
+- uid: E7.Protobuf.ProtoBinaryManager`2.SaveFileExtension*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.SaveFileExtension
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_SaveFileExtension
+  name: SaveFileExtension
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.SaveFileExtension
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.SaveFileExtension
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).SaveFileExtension
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).SaveFileExtension
+- uid: UnityEngine.Application.persistentDataPath
+  commentId: P:UnityEngine.Application.persistentDataPath
+  isExternal: true
+  name: persistentDataPath
+  nameWithType: Application.persistentDataPath
+  fullName: UnityEngine.Application.persistentDataPath
+- uid: E7.Protobuf.ProtoBinaryManager`2.InnerSaveFolder*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.InnerSaveFolder
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_InnerSaveFolder
+  name: InnerSaveFolder
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.InnerSaveFolder
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.InnerSaveFolder
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).InnerSaveFolder
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).InnerSaveFolder
+- uid: System.Security.Cryptography.CryptographicException
+  commentId: T:System.Security.Cryptography.CryptographicException
+  isExternal: true
+  name: CryptographicException
+  nameWithType: CryptographicException
+  fullName: System.Security.Cryptography.CryptographicException
+- uid: System.ArgumentException
+  commentId: T:System.ArgumentException
+  isExternal: true
+  name: ArgumentException
+  nameWithType: ArgumentException
+  fullName: System.ArgumentException
+- uid: E7.Protobuf.ProtoBinaryManager`2.Migration*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.Migration
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Migration_System_String_
+  name: Migration
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Migration
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Migration
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Migration
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Migration
+- uid: '{PROTO}'
+  commentId: '!:PROTO'
+  definition: PROTO
+  name: PROTO
+  nameWithType: PROTO
+  fullName: PROTO
+- uid: PROTO
+  name: PROTO
+  nameWithType: PROTO
+  fullName: PROTO
+- uid: E7.Protobuf.ProtoBinaryManager`2.Validation*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.Validation
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Validation__0_
+  name: Validation
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Validation
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Validation
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Validation
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Validation
+- uid: E7.Protobuf.ProtoBinaryManager`2.FromStream(System.IO.Stream)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.FromStream(System.IO.Stream)
+  isExternal: true
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_FromStream_System_IO_Stream_
+  name: FromStream(Stream)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.FromStream(Stream)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.FromStream(System.IO.Stream)
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).FromStream(Stream)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).FromStream(System.IO.Stream)
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.FromStream(System.IO.Stream)
+    name: FromStream
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_FromStream_System_IO_Stream_
+  - name: (
+  - uid: System.IO.Stream
+    name: Stream
+    isExternal: true
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.FromStream(System.IO.Stream)
+    name: FromStream
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_FromStream_System_IO_Stream_
+  - name: (
+  - uid: System.IO.Stream
+    name: Stream
+    isExternal: true
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager`2.ToStream(`0)
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.ToStream(`0)
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ToStream__0_
+  name: ToStream(PROTO)
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ToStream(PROTO)
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ToStream(PROTO)
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ToStream(PROTO)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ToStream(PROTO)
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.ToStream(`0)
+    name: ToStream
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ToStream__0_
+  - name: (
+  - name: PROTO
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.ToStream(`0)
+    name: ToStream
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ToStream__0_
+  - name: (
+  - name: PROTO
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionPassword*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.EncryptionPassword
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_EncryptionPassword
+  name: EncryptionPassword
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionPassword
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionPassword
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionPassword
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionPassword
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionSalt*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.EncryptionSalt
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_EncryptionSalt
+  name: EncryptionSalt
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionSalt
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionSalt
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionSalt
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionSalt
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionIteration*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.EncryptionIteration
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_EncryptionIteration
+  name: EncryptionIteration
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionIteration
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionIteration
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionIteration
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionIteration
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionScheme*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.EncryptionScheme
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_EncryptionScheme
+  name: EncryptionScheme
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionScheme
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionScheme
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionScheme
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionScheme
+- uid: E7.Protobuf.ProtoEncryptionScheme
+  commentId: T:E7.Protobuf.ProtoEncryptionScheme
+  parent: E7.Protobuf
+  href: E7.Protobuf.ProtoEncryptionScheme.html
+  name: ProtoEncryptionScheme
+  nameWithType: ProtoEncryptionScheme
+  fullName: E7.Protobuf.ProtoEncryptionScheme
+- uid: E7.Protobuf.ProtoBinaryManager`2.#ctor*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.#ctor
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2__ctor
+  name: ProtoBinaryManager
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ProtoBinaryManager
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ProtoBinaryManager
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).New
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).New
+  name.vb: New
+- uid: E7.Protobuf.ProtoBinaryManager`2.Manager*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.Manager
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Manager
+  name: Manager
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Manager
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Manager
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Manager
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Manager
+- uid: '{SELF}'
+  commentId: '!:SELF'
+  definition: SELF
+  name: SELF
+  nameWithType: SELF
+  fullName: SELF
+- uid: SELF
+  commentId: '!:SELF'
+  name: SELF
+  nameWithType: SELF
+  fullName: SELF
+- uid: E7.Protobuf.ProtoBinaryManager`2.Active*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.Active
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Active
+  name: Active
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Active
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Active
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Active
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Active
+- uid: E7.Protobuf.ProtoBinaryManager`2.Save*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.Save
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Save
+  name: Save
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Save
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Save
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Save
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Save
+- uid: E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup
+  commentId: M:E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_RestoreFromBackup
+  name: RestoreFromBackup()
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.RestoreFromBackup()
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.RestoreFromBackup()
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).RestoreFromBackup()
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).RestoreFromBackup()
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup
+    name: RestoreFromBackup
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_RestoreFromBackup
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup
+    name: RestoreFromBackup
+    href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_RestoreFromBackup
+  - name: (
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager`2.BackupActive*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.BackupActive
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_BackupActive
+  name: BackupActive
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.BackupActive
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.BackupActive
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).BackupActive
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).BackupActive
+- uid: E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.RestoreFromBackup
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_RestoreFromBackup
+  name: RestoreFromBackup
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.RestoreFromBackup
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.RestoreFromBackup
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).RestoreFromBackup
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).RestoreFromBackup
+- uid: E7.Protobuf.ProtoBinaryManager`2.ReloadActive*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.ReloadActive
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ReloadActive
+  name: ReloadActive
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ReloadActive
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ReloadActive
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ReloadActive
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ReloadActive
+- uid: E7.Protobuf.ProtoBinaryManager`2.FromBase64*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.FromBase64
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_FromBase64_System_String_
+  name: FromBase64
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.FromBase64
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.FromBase64
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).FromBase64
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).FromBase64
+- uid: E7.Protobuf.ProtoBinaryManager`2.FromBytes*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.FromBytes
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_FromBytes_System_Byte___
+  name: FromBytes
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.FromBytes
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.FromBytes
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).FromBytes
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).FromBytes
+- uid: System.Byte[]
+  isExternal: true
+  name: byte[]
+  nameWithType: byte[]
+  fullName: byte[]
+  nameWithType.vb: Byte()
+  fullName.vb: Byte()
+  name.vb: Byte()
+  spec.csharp:
+  - uid: System.Byte
+    name: byte
+    isExternal: true
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: System.Byte
+    name: Byte
+    isExternal: true
+  - name: (
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager`2.ToBytes*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.ToBytes
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ToBytes__0_
+  name: ToBytes
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ToBytes
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ToBytes
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ToBytes
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ToBytes
+- uid: E7.Protobuf.ProtoBinaryManager`2.ToBase64*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.ToBase64
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ToBase64__0_
+  name: ToBase64
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ToBase64
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ToBase64
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ToBase64
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ToBase64
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionPassword
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.EncryptionPassword
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_EncryptionPassword
+  name: EncryptionPassword
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionPassword
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionPassword
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionPassword
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionPassword
+- uid: E7.Protobuf.ProtoBinaryManager`2.EncryptionSalt
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.EncryptionSalt
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_EncryptionSalt
+  name: EncryptionSalt
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.EncryptionSalt
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.EncryptionSalt
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).EncryptionSalt
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).EncryptionSalt
+- uid: E7.Protobuf.ProtoBinaryManager`2.FromStream*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.FromStream
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_FromStream_System_IO_Stream_
+  name: FromStream
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.FromStream
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.FromStream
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).FromStream
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).FromStream
+- uid: System.IO.Stream
+  commentId: T:System.IO.Stream
+  parent: System.IO
+  isExternal: true
+  name: Stream
+  nameWithType: Stream
+  fullName: System.IO.Stream
+- uid: System.IO
+  commentId: N:System.IO
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.IO
+  nameWithType: System.IO
+  fullName: System.IO
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.IO
+    name: IO
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.io
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.IO
+    name: IO
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.io
+- uid: E7.Protobuf.ProtoBinaryManager`2.ToStream*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.ToStream
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ToStream__0_
+  name: ToStream
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ToStream
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ToStream
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ToStream
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ToStream
+- uid: System.IO.MemoryStream
+  commentId: T:System.IO.MemoryStream
+  parent: System.IO
+  isExternal: true
+  name: MemoryStream
+  nameWithType: MemoryStream
+  fullName: System.IO.MemoryStream
+- uid: E7.Protobuf.ProtoBinaryManager`2.LoadMain*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.LoadMain
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_LoadMain
+  name: LoadMain
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.LoadMain
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.LoadMain
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).LoadMain
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).LoadMain
+- uid: E7.Protobuf.ProtoBinaryManager`2.InnerSaveFolder
+  commentId: P:E7.Protobuf.ProtoBinaryManager`2.InnerSaveFolder
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_InnerSaveFolder
+  name: InnerSaveFolder
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.InnerSaveFolder
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.InnerSaveFolder
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).InnerSaveFolder
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).InnerSaveFolder
+- uid: E7.Protobuf.ProtoBinaryManager`2.Load*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.Load
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_Load_System_String_
+  name: Load
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.Load
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.Load
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).Load
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).Load
+- uid: E7.Protobuf.ProtoBinaryManager`2.ApplyToActive*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.ApplyToActive
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ApplyToActive__0_
+  name: ApplyToActive
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ApplyToActive
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ApplyToActive
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ApplyToActive
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ApplyToActive
+- uid: E7.Protobuf.ProtoBinaryManager`2.ResetActive*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager`2.ResetActive
+  href: E7.Protobuf.ProtoBinaryManager-2.html#E7_Protobuf_ProtoBinaryManager_2_ResetActive
+  name: ResetActive
+  nameWithType: ProtoBinaryManager<PROTO, SELF>.ResetActive
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>.ResetActive
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF).ResetActive
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF).ResetActive

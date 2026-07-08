@@ -1,0 +1,62 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../src/protobuf-unity",
+          "files": [
+            "*.sln"
+          ]
+        }
+      ],
+      "dest": "../src/protobuf-unity/Assets/protobuf-unity/Documentation~/api",
+      "disableGitFeatures": true,
+      "disableDefaultFilter": false,
+      "filter": "filterConfig.yml"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "src": "../src/protobuf-unity/Assets/protobuf-unity",
+        "files": [
+          "CHANGELOG.md"
+        ]
+      },
+      {
+        "src": "../src/protobuf-unity/Assets/protobuf-unity/Documentation~",
+        "files": [
+          "*.md",
+          "*.yml",
+          "**/*.md",
+          "**/*.yml"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "logo.png",
+          "splashImage.png",
+          "ogimage.png"
+        ]
+      },
+      {
+        "src": "../src/protobuf-unity/Assets/protobuf-unity/Documentation~",
+        "files": [
+          "**/images/*"
+        ]
+      }
+    ],
+    "dest": "_site",
+    "globalMetadataFiles": [
+      "global.json"
+    ],
+    "template": [
+      "default",
+      "modern",
+      "exc7-theme"
+    ],
+    "disableGitFeatures": true
+  }
+}

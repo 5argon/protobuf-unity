@@ -1,0 +1,11 @@
+apiRules:
+- include:
+    uidRegex: ^E7\.Protobuf
+- exclude:
+    uidRegex: ^UnityEngine
+- exclude:
+    uidRegex: ^UnityEditor
+- exclude:
+    uidRegex: ^System
+- exclude:
+    uidRegex: ^Google\.Protobuf

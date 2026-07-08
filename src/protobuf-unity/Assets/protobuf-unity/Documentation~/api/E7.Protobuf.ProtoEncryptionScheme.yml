@@ -1,0 +1,114 @@
+### YamlMime:ManagedReference
+items:
+- uid: E7.Protobuf.ProtoEncryptionScheme
+  commentId: T:E7.Protobuf.ProtoEncryptionScheme
+  id: ProtoEncryptionScheme
+  parent: E7.Protobuf
+  children:
+  - E7.Protobuf.ProtoEncryptionScheme.Sha1Aes128
+  - E7.Protobuf.ProtoEncryptionScheme.Sha256Aes256
+  - E7.Protobuf.ProtoEncryptionScheme.Sha512Aes256
+  langs:
+  - csharp
+  - vb
+  name: ProtoEncryptionScheme
+  nameWithType: ProtoEncryptionScheme
+  fullName: E7.Protobuf.ProtoEncryptionScheme
+  type: Enum
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    Selects the PBKDF2 hash and the AES key size used to derive the encryption key.
+
+    The default stays on the legacy scheme so existing save files remain readable; picking another
+
+    value changes the derived key, making previously written saves unreadable without a migration.
+  example: []
+  syntax:
+    content: public enum ProtoEncryptionScheme
+    content.vb: Public Enum ProtoEncryptionScheme
+- uid: E7.Protobuf.ProtoEncryptionScheme.Sha1Aes128
+  commentId: F:E7.Protobuf.ProtoEncryptionScheme.Sha1Aes128
+  id: Sha1Aes128
+  parent: E7.Protobuf.ProtoEncryptionScheme
+  langs:
+  - csharp
+  - vb
+  name: Sha1Aes128
+  nameWithType: ProtoEncryptionScheme.Sha1Aes128
+  fullName: E7.Protobuf.ProtoEncryptionScheme.Sha1Aes128
+  type: Field
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  syntax:
+    content: Sha1Aes128 = 0
+    return:
+      type: E7.Protobuf.ProtoEncryptionScheme
+- uid: E7.Protobuf.ProtoEncryptionScheme.Sha256Aes256
+  commentId: F:E7.Protobuf.ProtoEncryptionScheme.Sha256Aes256
+  id: Sha256Aes256
+  parent: E7.Protobuf.ProtoEncryptionScheme
+  langs:
+  - csharp
+  - vb
+  name: Sha256Aes256
+  nameWithType: ProtoEncryptionScheme.Sha256Aes256
+  fullName: E7.Protobuf.ProtoEncryptionScheme.Sha256Aes256
+  type: Field
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  syntax:
+    content: Sha256Aes256 = 1
+    return:
+      type: E7.Protobuf.ProtoEncryptionScheme
+- uid: E7.Protobuf.ProtoEncryptionScheme.Sha512Aes256
+  commentId: F:E7.Protobuf.ProtoEncryptionScheme.Sha512Aes256
+  id: Sha512Aes256
+  parent: E7.Protobuf.ProtoEncryptionScheme
+  langs:
+  - csharp
+  - vb
+  name: Sha512Aes256
+  nameWithType: ProtoEncryptionScheme.Sha512Aes256
+  fullName: E7.Protobuf.ProtoEncryptionScheme.Sha512Aes256
+  type: Field
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  syntax:
+    content: Sha512Aes256 = 2
+    return:
+      type: E7.Protobuf.ProtoEncryptionScheme
+references:
+- uid: E7.Protobuf
+  commentId: N:E7.Protobuf
+  href: E7.html
+  name: E7.Protobuf
+  nameWithType: E7.Protobuf
+  fullName: E7.Protobuf
+  spec.csharp:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+  spec.vb:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+- uid: E7.Protobuf.ProtoEncryptionScheme
+  commentId: T:E7.Protobuf.ProtoEncryptionScheme
+  parent: E7.Protobuf
+  href: E7.Protobuf.ProtoEncryptionScheme.html
+  name: ProtoEncryptionScheme
+  nameWithType: ProtoEncryptionScheme
+  fullName: E7.Protobuf.ProtoEncryptionScheme

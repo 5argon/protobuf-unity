@@ -1,0 +1,6 @@
+- name: Manual
+  href: manual/
+- name: API
+  href: api/
+- name: Changelog
+  href: ../CHANGELOG.md

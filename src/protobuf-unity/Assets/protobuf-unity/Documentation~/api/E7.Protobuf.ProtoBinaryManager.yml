@@ -1,0 +1,539 @@
+### YamlMime:ManagedReference
+items:
+- uid: E7.Protobuf.ProtoBinaryManager
+  commentId: T:E7.Protobuf.ProtoBinaryManager
+  id: ProtoBinaryManager
+  parent: E7.Protobuf
+  children:
+  - E7.Protobuf.ProtoBinaryManager.ProtoFromFile``1(System.Byte[],System.String,System.String)
+  - E7.Protobuf.ProtoBinaryManager.ProtoFromStream``1(System.IO.Stream,System.Byte[])
+  - E7.Protobuf.ProtoBinaryManager.ProtoToFile``1(``0,System.Byte[],System.String,System.String)
+  - E7.Protobuf.ProtoBinaryManager.ProtoToStream``1(``0,System.Byte[])
+  - E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream,System.String,System.String)
+  langs:
+  - csharp
+  - vb
+  name: ProtoBinaryManager
+  nameWithType: ProtoBinaryManager
+  fullName: E7.Protobuf.ProtoBinaryManager
+  type: Class
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: Pure utility version of <xref href="E7.Protobuf.ProtoBinaryManager%602" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public static class ProtoBinaryManager
+    content.vb: Public Module ProtoBinaryManager
+  inheritance:
+  - System.Object
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoFromStream``1(System.IO.Stream,System.Byte[])
+  commentId: M:E7.Protobuf.ProtoBinaryManager.ProtoFromStream``1(System.IO.Stream,System.Byte[])
+  id: ProtoFromStream``1(System.IO.Stream,System.Byte[])
+  parent: E7.Protobuf.ProtoBinaryManager
+  langs:
+  - csharp
+  - vb
+  name: ProtoFromStream<P>(Stream, byte[])
+  nameWithType: ProtoBinaryManager.ProtoFromStream<P>(Stream, byte[])
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoFromStream<P>(System.IO.Stream, byte[])
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    Pick up 16 bytes IV from the front of cipher text, use it together with <code class="paramref">key</code>
+
+    to AES parse the protobuf stream.
+  example: []
+  syntax:
+    content: 'public static P ProtoFromStream<P>(Stream stream, byte[] key) where P : IMessage<P>, new()'
+    parameters:
+    - id: stream
+      type: System.IO.Stream
+    - id: key
+      type: System.Byte[]
+    typeParameters:
+    - id: P
+      description: Your protobuf type here.
+    return:
+      type: '{P}'
+    content.vb: Public Shared Function ProtoFromStream(Of P As {IMessage(Of P), New})(stream As Stream, key As Byte()) As P
+  overload: E7.Protobuf.ProtoBinaryManager.ProtoFromStream*
+  nameWithType.vb: ProtoBinaryManager.ProtoFromStream(Of P)(Stream, Byte())
+  fullName.vb: E7.Protobuf.ProtoBinaryManager.ProtoFromStream(Of P)(System.IO.Stream, Byte())
+  name.vb: ProtoFromStream(Of P)(Stream, Byte())
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoToFile``1(``0,System.Byte[],System.String,System.String)
+  commentId: M:E7.Protobuf.ProtoBinaryManager.ProtoToFile``1(``0,System.Byte[],System.String,System.String)
+  id: ProtoToFile``1(``0,System.Byte[],System.String,System.String)
+  parent: E7.Protobuf.ProtoBinaryManager
+  langs:
+  - csharp
+  - vb
+  name: ProtoToFile<P>(P, byte[], string, string)
+  nameWithType: ProtoBinaryManager.ProtoToFile<P>(P, byte[], string, string)
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoToFile<P>(P, byte[], string, string)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    A shortcut for <xref href="E7.Protobuf.ProtoBinaryManager.ProtoFromStream%60%601(System.IO.Stream%2cSystem.Byte%5b%5d)" data-throw-if-not-resolved="false"></xref> then
+
+    <xref href="E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream%2cSystem.String%2cSystem.String)" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: 'public static void ProtoToFile<P>(P save, byte[] key, string saveFolderAbsolute, string fileNameWithExtension) where P : IMessage<P>, new()'
+    parameters:
+    - id: save
+      type: '{P}'
+    - id: key
+      type: System.Byte[]
+    - id: saveFolderAbsolute
+      type: System.String
+    - id: fileNameWithExtension
+      type: System.String
+    typeParameters:
+    - id: P
+    content.vb: Public Shared Sub ProtoToFile(Of P As {IMessage(Of P), New})(save As P, key As Byte(), saveFolderAbsolute As String, fileNameWithExtension As String)
+  overload: E7.Protobuf.ProtoBinaryManager.ProtoToFile*
+  nameWithType.vb: ProtoBinaryManager.ProtoToFile(Of P)(P, Byte(), String, String)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager.ProtoToFile(Of P)(P, Byte(), String, String)
+  name.vb: ProtoToFile(Of P)(P, Byte(), String, String)
+- uid: E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream,System.String,System.String)
+  commentId: M:E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream,System.String,System.String)
+  id: StreamToFile(System.IO.MemoryStream,System.String,System.String)
+  parent: E7.Protobuf.ProtoBinaryManager
+  langs:
+  - csharp
+  - vb
+  name: StreamToFile(MemoryStream, string, string)
+  nameWithType: ProtoBinaryManager.StreamToFile(MemoryStream, string, string)
+  fullName: E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream, string, string)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    The <code class="paramref">memStream</code> probably should came from <xref href="E7.Protobuf.ProtoBinaryManager.ProtoToStream%60%601(%60%600%2cSystem.Byte%5b%5d)" data-throw-if-not-resolved="false"></xref>.
+
+    Automatically dispose the stream after it is done.
+  example: []
+  syntax:
+    content: public static void StreamToFile(MemoryStream memStream, string saveFolderAbsolute, string fileNameWithExtension)
+    parameters:
+    - id: memStream
+      type: System.IO.MemoryStream
+    - id: saveFolderAbsolute
+      type: System.String
+    - id: fileNameWithExtension
+      type: System.String
+    content.vb: Public Shared Sub StreamToFile(memStream As MemoryStream, saveFolderAbsolute As String, fileNameWithExtension As String)
+  overload: E7.Protobuf.ProtoBinaryManager.StreamToFile*
+  nameWithType.vb: ProtoBinaryManager.StreamToFile(MemoryStream, String, String)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream, String, String)
+  name.vb: StreamToFile(MemoryStream, String, String)
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoToStream``1(``0,System.Byte[])
+  commentId: M:E7.Protobuf.ProtoBinaryManager.ProtoToStream``1(``0,System.Byte[])
+  id: ProtoToStream``1(``0,System.Byte[])
+  parent: E7.Protobuf.ProtoBinaryManager
+  langs:
+  - csharp
+  - vb
+  name: ProtoToStream<P>(P, byte[])
+  nameWithType: ProtoBinaryManager.ProtoToStream<P>(P, byte[])
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoToStream<P>(P, byte[])
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  summary: >-
+    Applies basic AES encryption with the provided <code class="paramref">key</code>, with generated IV
+
+    pasted in front of cipher text, before writing to the disk.
+  example: []
+  syntax:
+    content: 'public static MemoryStream ProtoToStream<P>(P save, byte[] key) where P : IMessage<P>, new()'
+    parameters:
+    - id: save
+      type: '{P}'
+    - id: key
+      type: System.Byte[]
+    typeParameters:
+    - id: P
+      description: Your protobuf type here.
+    return:
+      type: System.IO.MemoryStream
+    content.vb: Public Shared Function ProtoToStream(Of P As {IMessage(Of P), New})(save As P, key As Byte()) As MemoryStream
+  overload: E7.Protobuf.ProtoBinaryManager.ProtoToStream*
+  nameWithType.vb: ProtoBinaryManager.ProtoToStream(Of P)(P, Byte())
+  fullName.vb: E7.Protobuf.ProtoBinaryManager.ProtoToStream(Of P)(P, Byte())
+  name.vb: ProtoToStream(Of P)(P, Byte())
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoFromFile``1(System.Byte[],System.String,System.String)
+  commentId: M:E7.Protobuf.ProtoBinaryManager.ProtoFromFile``1(System.Byte[],System.String,System.String)
+  id: ProtoFromFile``1(System.Byte[],System.String,System.String)
+  parent: E7.Protobuf.ProtoBinaryManager
+  langs:
+  - csharp
+  - vb
+  name: ProtoFromFile<PROTO>(byte[], string, string)
+  nameWithType: ProtoBinaryManager.ProtoFromFile<PROTO>(byte[], string, string)
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoFromFile<PROTO>(byte[], string, string)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity
+  namespace: E7.Protobuf
+  syntax:
+    content: 'public static PROTO ProtoFromFile<PROTO>(byte[] key, string loadFolderAbsolute, string fileNameWithExtension) where PROTO : IMessage<PROTO>, new()'
+    parameters:
+    - id: key
+      type: System.Byte[]
+    - id: loadFolderAbsolute
+      type: System.String
+    - id: fileNameWithExtension
+      type: System.String
+    typeParameters:
+    - id: PROTO
+    return:
+      type: '{PROTO}'
+    content.vb: Public Shared Function ProtoFromFile(Of PROTO As {IMessage(Of PROTO), New})(key As Byte(), loadFolderAbsolute As String, fileNameWithExtension As String) As PROTO
+  overload: E7.Protobuf.ProtoBinaryManager.ProtoFromFile*
+  nameWithType.vb: ProtoBinaryManager.ProtoFromFile(Of PROTO)(Byte(), String, String)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager.ProtoFromFile(Of PROTO)(Byte(), String, String)
+  name.vb: ProtoFromFile(Of PROTO)(Byte(), String, String)
+references:
+- uid: E7.Protobuf.ProtoBinaryManager`2
+  commentId: T:E7.Protobuf.ProtoBinaryManager`2
+  href: E7.Protobuf.ProtoBinaryManager-2.html
+  name: ProtoBinaryManager<PROTO, SELF>
+  nameWithType: ProtoBinaryManager<PROTO, SELF>
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF)
+  name.vb: ProtoBinaryManager(Of PROTO, SELF)
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager`2
+    name: ProtoBinaryManager
+    href: E7.Protobuf.ProtoBinaryManager-2.html
+  - name: <
+  - name: PROTO
+  - name: ','
+  - name: " "
+  - name: SELF
+  - name: '>'
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager`2
+    name: ProtoBinaryManager
+    href: E7.Protobuf.ProtoBinaryManager-2.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: PROTO
+  - name: ','
+  - name: " "
+  - name: SELF
+  - name: )
+- uid: E7.Protobuf
+  commentId: N:E7.Protobuf
+  href: E7.html
+  name: E7.Protobuf
+  nameWithType: E7.Protobuf
+  fullName: E7.Protobuf
+  spec.csharp:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+  spec.vb:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoFromStream*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager.ProtoFromStream
+  href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoFromStream__1_System_IO_Stream_System_Byte___
+  name: ProtoFromStream
+  nameWithType: ProtoBinaryManager.ProtoFromStream
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoFromStream
+- uid: System.IO.Stream
+  commentId: T:System.IO.Stream
+  parent: System.IO
+  isExternal: true
+  name: Stream
+  nameWithType: Stream
+  fullName: System.IO.Stream
+- uid: System.Byte[]
+  isExternal: true
+  name: byte[]
+  nameWithType: byte[]
+  fullName: byte[]
+  nameWithType.vb: Byte()
+  fullName.vb: Byte()
+  name.vb: Byte()
+  spec.csharp:
+  - uid: System.Byte
+    name: byte
+    isExternal: true
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: System.Byte
+    name: Byte
+    isExternal: true
+  - name: (
+  - name: )
+- uid: '{P}'
+  commentId: '!:P'
+  definition: P
+  name: P
+  nameWithType: P
+  fullName: P
+- uid: System.IO
+  commentId: N:System.IO
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.IO
+  nameWithType: System.IO
+  fullName: System.IO
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.IO
+    name: IO
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.io
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.IO
+    name: IO
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.io
+- uid: P
+  name: P
+  nameWithType: P
+  fullName: P
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoFromStream``1(System.IO.Stream,System.Byte[])
+  commentId: M:E7.Protobuf.ProtoBinaryManager.ProtoFromStream``1(System.IO.Stream,System.Byte[])
+  isExternal: true
+  href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoFromStream__1_System_IO_Stream_System_Byte___
+  name: ProtoFromStream<P>(Stream, byte[])
+  nameWithType: ProtoBinaryManager.ProtoFromStream<P>(Stream, byte[])
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoFromStream<P>(System.IO.Stream, byte[])
+  nameWithType.vb: ProtoBinaryManager.ProtoFromStream(Of P)(Stream, Byte())
+  fullName.vb: E7.Protobuf.ProtoBinaryManager.ProtoFromStream(Of P)(System.IO.Stream, Byte())
+  name.vb: ProtoFromStream(Of P)(Stream, Byte())
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager.ProtoFromStream``1(System.IO.Stream,System.Byte[])
+    name: ProtoFromStream
+    href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoFromStream__1_System_IO_Stream_System_Byte___
+  - name: <
+  - name: P
+  - name: '>'
+  - name: (
+  - uid: System.IO.Stream
+    name: Stream
+    isExternal: true
+  - name: ','
+  - name: " "
+  - uid: System.Byte
+    name: byte
+    isExternal: true
+  - name: '['
+  - name: ']'
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager.ProtoFromStream``1(System.IO.Stream,System.Byte[])
+    name: ProtoFromStream
+    href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoFromStream__1_System_IO_Stream_System_Byte___
+  - name: (
+  - name: Of
+  - name: " "
+  - name: P
+  - name: )
+  - name: (
+  - uid: System.IO.Stream
+    name: Stream
+    isExternal: true
+  - name: ','
+  - name: " "
+  - uid: System.Byte
+    name: Byte
+    isExternal: true
+  - name: (
+  - name: )
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream,System.String,System.String)
+  commentId: M:E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream,System.String,System.String)
+  isExternal: true
+  href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_StreamToFile_System_IO_MemoryStream_System_String_System_String_
+  name: StreamToFile(MemoryStream, string, string)
+  nameWithType: ProtoBinaryManager.StreamToFile(MemoryStream, string, string)
+  fullName: E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream, string, string)
+  nameWithType.vb: ProtoBinaryManager.StreamToFile(MemoryStream, String, String)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream, String, String)
+  name.vb: StreamToFile(MemoryStream, String, String)
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream,System.String,System.String)
+    name: StreamToFile
+    href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_StreamToFile_System_IO_MemoryStream_System_String_System_String_
+  - name: (
+  - uid: System.IO.MemoryStream
+    name: MemoryStream
+    isExternal: true
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager.StreamToFile(System.IO.MemoryStream,System.String,System.String)
+    name: StreamToFile
+    href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_StreamToFile_System_IO_MemoryStream_System_String_System_String_
+  - name: (
+  - uid: System.IO.MemoryStream
+    name: MemoryStream
+    isExternal: true
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoToFile*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager.ProtoToFile
+  href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoToFile__1___0_System_Byte___System_String_System_String_
+  name: ProtoToFile
+  nameWithType: ProtoBinaryManager.ProtoToFile
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoToFile
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoToStream``1(``0,System.Byte[])
+  commentId: M:E7.Protobuf.ProtoBinaryManager.ProtoToStream``1(``0,System.Byte[])
+  isExternal: true
+  href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoToStream__1___0_System_Byte___
+  name: ProtoToStream<P>(P, byte[])
+  nameWithType: ProtoBinaryManager.ProtoToStream<P>(P, byte[])
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoToStream<P>(P, byte[])
+  nameWithType.vb: ProtoBinaryManager.ProtoToStream(Of P)(P, Byte())
+  fullName.vb: E7.Protobuf.ProtoBinaryManager.ProtoToStream(Of P)(P, Byte())
+  name.vb: ProtoToStream(Of P)(P, Byte())
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager.ProtoToStream``1(``0,System.Byte[])
+    name: ProtoToStream
+    href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoToStream__1___0_System_Byte___
+  - name: <
+  - name: P
+  - name: '>'
+  - name: (
+  - name: P
+  - name: ','
+  - name: " "
+  - uid: System.Byte
+    name: byte
+    isExternal: true
+  - name: '['
+  - name: ']'
+  - name: )
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager.ProtoToStream``1(``0,System.Byte[])
+    name: ProtoToStream
+    href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoToStream__1___0_System_Byte___
+  - name: (
+  - name: Of
+  - name: " "
+  - name: P
+  - name: )
+  - name: (
+  - name: P
+  - name: ','
+  - name: " "
+  - uid: System.Byte
+    name: Byte
+    isExternal: true
+  - name: (
+  - name: )
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager.StreamToFile*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager.StreamToFile
+  href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_StreamToFile_System_IO_MemoryStream_System_String_System_String_
+  name: StreamToFile
+  nameWithType: ProtoBinaryManager.StreamToFile
+  fullName: E7.Protobuf.ProtoBinaryManager.StreamToFile
+- uid: System.IO.MemoryStream
+  commentId: T:System.IO.MemoryStream
+  parent: System.IO
+  isExternal: true
+  name: MemoryStream
+  nameWithType: MemoryStream
+  fullName: System.IO.MemoryStream
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoToStream*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager.ProtoToStream
+  href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoToStream__1___0_System_Byte___
+  name: ProtoToStream
+  nameWithType: ProtoBinaryManager.ProtoToStream
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoToStream
+- uid: E7.Protobuf.ProtoBinaryManager.ProtoFromFile*
+  commentId: Overload:E7.Protobuf.ProtoBinaryManager.ProtoFromFile
+  href: E7.Protobuf.ProtoBinaryManager.html#E7_Protobuf_ProtoBinaryManager_ProtoFromFile__1_System_Byte___System_String_System_String_
+  name: ProtoFromFile
+  nameWithType: ProtoBinaryManager.ProtoFromFile
+  fullName: E7.Protobuf.ProtoBinaryManager.ProtoFromFile
+- uid: '{PROTO}'
+  commentId: '!:PROTO'
+  definition: PROTO
+  name: PROTO
+  nameWithType: PROTO
+  fullName: PROTO
+- uid: PROTO
+  name: PROTO
+  nameWithType: PROTO
+  fullName: PROTO

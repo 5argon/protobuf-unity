@@ -1,0 +1,18 @@
+- name: How It Works
+  href: index.md
+- name: Installation
+  href: installation.md
+- name: The Google.Protobuf Library
+  href: google-protobuf.md
+- name: C# Output Options
+  href: csharp-output.md
+- name: gRPC
+  href: grpc.md
+- name: Well-Known Types
+  href: well-known-types.md
+- name: ProtoBinaryManager
+  href: proto-binary-manager.md
+- name: Interoperate With a Backend
+  href: backend.md
+- name: Notes & Gotchas
+  href: notes.md

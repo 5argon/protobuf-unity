@@ -1,0 +1,329 @@
+### YamlMime:ManagedReference
+items:
+- uid: E7.Protobuf.ProtobufCsharpOptions
+  commentId: T:E7.Protobuf.ProtobufCsharpOptions
+  id: ProtobufCsharpOptions
+  parent: E7.Protobuf
+  children:
+  - E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt
+  - E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt(System.Boolean,System.Boolean,System.String,System.String)
+  - E7.Protobuf.ProtobufCsharpOptions.extraOptions
+  - E7.Protobuf.ProtobufCsharpOptions.fileExtension
+  - E7.Protobuf.ProtobufCsharpOptions.internalAccess
+  - E7.Protobuf.ProtobufCsharpOptions.serializable
+  langs:
+  - csharp
+  - vb
+  name: ProtobufCsharpOptions
+  nameWithType: ProtobufCsharpOptions
+  fullName: E7.Protobuf.ProtobufCsharpOptions
+  type: Class
+  assemblies:
+  - E7.ProtobufUnity.Editor
+  namespace: E7.Protobuf
+  summary: >-
+    Per-folder override of the C# output options (protoc <code>--csharp_opt</code>).
+
+    Place this asset in a folder to make every <code>.proto</code> in that folder — and its
+
+    subfolders, until a deeper override is found — compile with these options instead of
+
+    the global defaults in Preferences &gt; Protobuf. Each <code>.proto</code> is a separate protoc
+
+    run, so different folders can generate with different options.
+
+    https://protobuf.dev/reference/csharp/csharp-generated/#compiler_options
+  example: []
+  syntax:
+    content: >-
+      [CreateAssetMenu(fileName = "ProtobufCsharpOptions", menuName = "Protobuf Unity/C# Output Options (per folder)")]
+
+      public class ProtobufCsharpOptions : ScriptableObject
+    content.vb: >-
+      <CreateAssetMenu(fileName:="ProtobufCsharpOptions", menuName:="Protobuf Unity/C# Output Options (per folder)")>
+
+      Public Class ProtobufCsharpOptions Inherits ScriptableObject
+  inheritance:
+  - System.Object
+  - UnityEngine.Object
+  - UnityEngine.ScriptableObject
+  attributes:
+  - type: UnityEngine.CreateAssetMenuAttribute
+    ctor: UnityEngine.CreateAssetMenuAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: fileName
+      type: System.String
+      value: ProtobufCsharpOptions
+    - name: menuName
+      type: System.String
+      value: Protobuf Unity/C# Output Options (per folder)
+- uid: E7.Protobuf.ProtobufCsharpOptions.internalAccess
+  commentId: F:E7.Protobuf.ProtobufCsharpOptions.internalAccess
+  id: internalAccess
+  parent: E7.Protobuf.ProtobufCsharpOptions
+  langs:
+  - csharp
+  - vb
+  name: internalAccess
+  nameWithType: ProtobufCsharpOptions.internalAccess
+  fullName: E7.Protobuf.ProtobufCsharpOptions.internalAccess
+  type: Field
+  assemblies:
+  - E7.ProtobufUnity.Editor
+  namespace: E7.Protobuf
+  syntax:
+    content: >-
+      [Tooltip("Generate types as 'internal' instead of 'public' (internal_access).")]
+
+      public bool internalAccess
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <Tooltip("Generate types as 'internal' instead of 'public' (internal_access).")>
+
+      Public internalAccess As Boolean
+  attributes:
+  - type: UnityEngine.TooltipAttribute
+    ctor: UnityEngine.TooltipAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: Generate types as 'internal' instead of 'public' (internal_access).
+- uid: E7.Protobuf.ProtobufCsharpOptions.serializable
+  commentId: F:E7.Protobuf.ProtobufCsharpOptions.serializable
+  id: serializable
+  parent: E7.Protobuf.ProtobufCsharpOptions
+  langs:
+  - csharp
+  - vb
+  name: serializable
+  nameWithType: ProtobufCsharpOptions.serializable
+  fullName: E7.Protobuf.ProtobufCsharpOptions.serializable
+  type: Field
+  assemblies:
+  - E7.ProtobufUnity.Editor
+  namespace: E7.Protobuf
+  syntax:
+    content: >-
+      [Tooltip("Add [System.Serializable] to generated message classes (serializable).")]
+
+      public bool serializable
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <Tooltip("Add [System.Serializable] to generated message classes (serializable).")>
+
+      Public serializable As Boolean
+  attributes:
+  - type: UnityEngine.TooltipAttribute
+    ctor: UnityEngine.TooltipAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: Add [System.Serializable] to generated message classes (serializable).
+- uid: E7.Protobuf.ProtobufCsharpOptions.fileExtension
+  commentId: F:E7.Protobuf.ProtobufCsharpOptions.fileExtension
+  id: fileExtension
+  parent: E7.Protobuf.ProtobufCsharpOptions
+  langs:
+  - csharp
+  - vb
+  name: fileExtension
+  nameWithType: ProtobufCsharpOptions.fileExtension
+  fullName: E7.Protobuf.ProtobufCsharpOptions.fileExtension
+  type: Field
+  assemblies:
+  - E7.ProtobufUnity.Editor
+  namespace: E7.Protobuf
+  syntax:
+    content: >-
+      [Tooltip("Extension for generated files. Empty = default '.cs'; '.g.cs' is a common choice. (file_extension=)")]
+
+      public string fileExtension
+    return:
+      type: System.String
+    content.vb: >-
+      <Tooltip("Extension for generated files. Empty = default '.cs'; '.g.cs' is a common choice. (file_extension=)")>
+
+      Public fileExtension As String
+  attributes:
+  - type: UnityEngine.TooltipAttribute
+    ctor: UnityEngine.TooltipAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: Extension for generated files. Empty = default '.cs'; '.g.cs' is a common choice. (file_extension=)
+- uid: E7.Protobuf.ProtobufCsharpOptions.extraOptions
+  commentId: F:E7.Protobuf.ProtobufCsharpOptions.extraOptions
+  id: extraOptions
+  parent: E7.Protobuf.ProtobufCsharpOptions
+  langs:
+  - csharp
+  - vb
+  name: extraOptions
+  nameWithType: ProtobufCsharpOptions.extraOptions
+  fullName: E7.Protobuf.ProtobufCsharpOptions.extraOptions
+  type: Field
+  assemblies:
+  - E7.ProtobufUnity.Editor
+  namespace: E7.Protobuf
+  syntax:
+    content: >-
+      [Tooltip("Appended verbatim (comma-separated) to --csharp_opt, e.g. base_namespace=Example.")]
+
+      public string extraOptions
+    return:
+      type: System.String
+    content.vb: >-
+      <Tooltip("Appended verbatim (comma-separated) to --csharp_opt, e.g. base_namespace=Example.")>
+
+      Public extraOptions As String
+  attributes:
+  - type: UnityEngine.TooltipAttribute
+    ctor: UnityEngine.TooltipAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: Appended verbatim (comma-separated) to --csharp_opt, e.g. base_namespace=Example.
+- uid: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt
+  commentId: M:E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt
+  id: BuildCsharpOpt
+  parent: E7.Protobuf.ProtobufCsharpOptions
+  langs:
+  - csharp
+  - vb
+  name: BuildCsharpOpt()
+  nameWithType: ProtobufCsharpOptions.BuildCsharpOpt()
+  fullName: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt()
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity.Editor
+  namespace: E7.Protobuf
+  summary: Builds this override's <code>--csharp_opt</code> value.
+  example: []
+  syntax:
+    content: public string BuildCsharpOpt()
+    return:
+      type: System.String
+    content.vb: Public Function BuildCsharpOpt() As String
+  overload: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt*
+- uid: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt(System.Boolean,System.Boolean,System.String,System.String)
+  commentId: M:E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt(System.Boolean,System.Boolean,System.String,System.String)
+  id: BuildCsharpOpt(System.Boolean,System.Boolean,System.String,System.String)
+  parent: E7.Protobuf.ProtobufCsharpOptions
+  langs:
+  - csharp
+  - vb
+  name: BuildCsharpOpt(bool, bool, string, string)
+  nameWithType: ProtobufCsharpOptions.BuildCsharpOpt(bool, bool, string, string)
+  fullName: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt(bool, bool, string, string)
+  type: Method
+  assemblies:
+  - E7.ProtobufUnity.Editor
+  namespace: E7.Protobuf
+  summary: >-
+    Shared builder for the <code>--csharp_opt</code> value, used by both the global settings
+
+    and per-folder overrides. Returns an empty string when nothing is configured.
+  example: []
+  syntax:
+    content: public static string BuildCsharpOpt(bool internalAccess, bool serializable, string fileExtension, string extraOptions)
+    parameters:
+    - id: internalAccess
+      type: System.Boolean
+    - id: serializable
+      type: System.Boolean
+    - id: fileExtension
+      type: System.String
+    - id: extraOptions
+      type: System.String
+    return:
+      type: System.String
+    content.vb: Public Shared Function BuildCsharpOpt(internalAccess As Boolean, serializable As Boolean, fileExtension As String, extraOptions As String) As String
+  overload: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt*
+  nameWithType.vb: ProtobufCsharpOptions.BuildCsharpOpt(Boolean, Boolean, String, String)
+  fullName.vb: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt(Boolean, Boolean, String, String)
+  name.vb: BuildCsharpOpt(Boolean, Boolean, String, String)
+references:
+- uid: E7.Protobuf
+  commentId: N:E7.Protobuf
+  href: E7.html
+  name: E7.Protobuf
+  nameWithType: E7.Protobuf
+  fullName: E7.Protobuf
+  spec.csharp:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+  spec.vb:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UnityEngine.Object
+  commentId: T:UnityEngine.Object
+  parent: UnityEngine
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: UnityEngine.Object
+- uid: UnityEngine.ScriptableObject
+  commentId: T:UnityEngine.ScriptableObject
+  parent: UnityEngine
+  isExternal: true
+  name: ScriptableObject
+  nameWithType: ScriptableObject
+  fullName: UnityEngine.ScriptableObject
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UnityEngine
+  commentId: N:UnityEngine
+  isExternal: true
+  name: UnityEngine
+  nameWithType: UnityEngine
+  fullName: UnityEngine
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt*
+  commentId: Overload:E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt
+  href: E7.Protobuf.ProtobufCsharpOptions.html#E7_Protobuf_ProtobufCsharpOptions_BuildCsharpOpt
+  name: BuildCsharpOpt
+  nameWithType: ProtobufCsharpOptions.BuildCsharpOpt
+  fullName: E7.Protobuf.ProtobufCsharpOptions.BuildCsharpOpt

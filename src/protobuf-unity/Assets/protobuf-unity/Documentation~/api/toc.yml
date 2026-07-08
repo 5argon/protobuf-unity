@@ -1,0 +1,22 @@
+### YamlMime:TableOfContent
+items:
+- uid: E7.Protobuf
+  name: E7.Protobuf
+  type: Namespace
+  items:
+  - uid: E7.Protobuf.ProtoBinaryManager
+    name: ProtoBinaryManager
+    type: Class
+  - uid: E7.Protobuf.ProtoBinaryManager`2
+    name: ProtoBinaryManager<PROTO, SELF>
+    type: Class
+  - uid: E7.Protobuf.ProtoEncryptionScheme
+    name: ProtoEncryptionScheme
+    type: Enum
+  - uid: E7.Protobuf.ProtoModule`2
+    name: ProtoModule<PROTO, MANAGER>
+    type: Class
+  - uid: E7.Protobuf.ProtobufCsharpOptions
+    name: ProtobufCsharpOptions
+    type: Class
+memberLayout: SamePage

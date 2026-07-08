@@ -8,6 +8,13 @@
 [Uu]ser[Ss]ettings/
 [Mm]emoryCaptures/
 
+# The unanchored folder rules above (e.g. [Bb]uild/, [Ll]ogs/) match at any depth,
+# so force-commit the dev project's tracked folders in case the package ever contains
+# a same-named subfolder.
+!/src/protobuf-unity/Assets/**
+!/src/protobuf-unity/Packages/**
+!/src/protobuf-unity/ProjectSettings/**
+
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
 

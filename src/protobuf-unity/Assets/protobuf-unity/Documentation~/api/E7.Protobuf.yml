@@ -1,0 +1,124 @@
+### YamlMime:ManagedReference
+items:
+- uid: E7.Protobuf
+  commentId: N:E7.Protobuf
+  id: E7.Protobuf
+  children:
+  - E7.Protobuf.ProtoBinaryManager
+  - E7.Protobuf.ProtoBinaryManager`2
+  - E7.Protobuf.ProtoEncryptionScheme
+  - E7.Protobuf.ProtoModule`2
+  - E7.Protobuf.ProtobufCsharpOptions
+  langs:
+  - csharp
+  - vb
+  name: E7.Protobuf
+  nameWithType: E7.Protobuf
+  fullName: E7.Protobuf
+  type: Namespace
+  assemblies:
+  - E7.ProtobufUnity.Editor
+references:
+- uid: E7.Protobuf.ProtobufCsharpOptions
+  commentId: T:E7.Protobuf.ProtobufCsharpOptions
+  href: E7.Protobuf.ProtobufCsharpOptions.html
+  name: ProtobufCsharpOptions
+  nameWithType: ProtobufCsharpOptions
+  fullName: E7.Protobuf.ProtobufCsharpOptions
+- uid: E7.Protobuf.ProtoModule`2
+  commentId: T:E7.Protobuf.ProtoModule`2
+  href: E7.Protobuf.ProtoModule-2.html
+  name: ProtoModule<PROTO, MANAGER>
+  nameWithType: ProtoModule<PROTO, MANAGER>
+  fullName: E7.Protobuf.ProtoModule<PROTO, MANAGER>
+  nameWithType.vb: ProtoModule(Of PROTO, MANAGER)
+  fullName.vb: E7.Protobuf.ProtoModule(Of PROTO, MANAGER)
+  name.vb: ProtoModule(Of PROTO, MANAGER)
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoModule`2
+    name: ProtoModule
+    href: E7.Protobuf.ProtoModule-2.html
+  - name: <
+  - name: PROTO
+  - name: ','
+  - name: " "
+  - name: MANAGER
+  - name: '>'
+  spec.vb:
+  - uid: E7.Protobuf.ProtoModule`2
+    name: ProtoModule
+    href: E7.Protobuf.ProtoModule-2.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: PROTO
+  - name: ','
+  - name: " "
+  - name: MANAGER
+  - name: )
+- uid: E7.Protobuf.ProtoBinaryManager
+  commentId: T:E7.Protobuf.ProtoBinaryManager
+  href: E7.Protobuf.ProtoBinaryManager.html
+  name: ProtoBinaryManager
+  nameWithType: ProtoBinaryManager
+  fullName: E7.Protobuf.ProtoBinaryManager
+- uid: E7.Protobuf.ProtoEncryptionScheme
+  commentId: T:E7.Protobuf.ProtoEncryptionScheme
+  parent: E7.Protobuf
+  href: E7.Protobuf.ProtoEncryptionScheme.html
+  name: ProtoEncryptionScheme
+  nameWithType: ProtoEncryptionScheme
+  fullName: E7.Protobuf.ProtoEncryptionScheme
+- uid: E7.Protobuf.ProtoBinaryManager`2
+  commentId: T:E7.Protobuf.ProtoBinaryManager`2
+  href: E7.Protobuf.ProtoBinaryManager-2.html
+  name: ProtoBinaryManager<PROTO, SELF>
+  nameWithType: ProtoBinaryManager<PROTO, SELF>
+  fullName: E7.Protobuf.ProtoBinaryManager<PROTO, SELF>
+  nameWithType.vb: ProtoBinaryManager(Of PROTO, SELF)
+  fullName.vb: E7.Protobuf.ProtoBinaryManager(Of PROTO, SELF)
+  name.vb: ProtoBinaryManager(Of PROTO, SELF)
+  spec.csharp:
+  - uid: E7.Protobuf.ProtoBinaryManager`2
+    name: ProtoBinaryManager
+    href: E7.Protobuf.ProtoBinaryManager-2.html
+  - name: <
+  - name: PROTO
+  - name: ','
+  - name: " "
+  - name: SELF
+  - name: '>'
+  spec.vb:
+  - uid: E7.Protobuf.ProtoBinaryManager`2
+    name: ProtoBinaryManager
+    href: E7.Protobuf.ProtoBinaryManager-2.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: PROTO
+  - name: ','
+  - name: " "
+  - name: SELF
+  - name: )
+- uid: E7.Protobuf
+  commentId: N:E7.Protobuf
+  href: E7.html
+  name: E7.Protobuf
+  nameWithType: E7.Protobuf
+  fullName: E7.Protobuf
+  spec.csharp:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
+  spec.vb:
+  - uid: E7
+    name: E7
+    href: E7.html
+  - name: .
+  - uid: E7.Protobuf
+    name: Protobuf
+    href: E7.Protobuf.html
