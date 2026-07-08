@@ -1,7 +1,5 @@
 using Google.Protobuf;
-using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
 
@@ -20,14 +18,11 @@ namespace E7.Protobuf
         public static P ProtoFromStream<P>(Stream stream, byte[] key) 
         where P : IMessage<P>, new()
         {
-            //iOS used to complain about Protobuf doing JIT without this, not sure about now.
-            Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
-
             //This scheme we paste initialization vector as a header of the save file, so we just yank it back for use...
             byte[] ivRead = new byte[16];
-            stream.Read(ivRead, 0, 16);
+            ReadExactly(stream, ivRead, 0, 16);
 
-            AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
+            using Aes aes = Aes.Create();
             aes.Key = key;
             aes.IV = ivRead;
 
@@ -68,8 +63,6 @@ namespace E7.Protobuf
         /// </summary>
         public static void StreamToFile(MemoryStream memStream, string saveFolderAbsolute, string fileNameWithExtension)
         {
-            Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
-
             //Debug.Log("Saved : " + Application.persistentDataPath);
             using (FileStream file = File.Create($"{saveFolderAbsolute}/{fileNameWithExtension}"))
             using (memStream)
@@ -88,7 +81,7 @@ namespace E7.Protobuf
         where P : IMessage<P>, new()
         {
             MemoryStream memStream = new MemoryStream();
-            AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
+            using Aes aes = Aes.Create();
             aes.Key = key;
             aes.GenerateIV();
             aes.Mode = CipherMode.CBC;
@@ -153,6 +146,26 @@ namespace E7.Protobuf
             else
             {
                 throw new FileNotFoundException($"Save file not found at path {path}");
+            }
+        }
+
+        /// <summary>
+        /// Reads exactly <paramref name="count"/> bytes into <paramref name="buffer"/>, looping until it is
+        /// filled. Plain <see cref="Stream.Read(byte[], int, int)"/> is allowed to return fewer bytes than
+        /// requested, which could otherwise leave the AES initialization vector only partially read.
+        /// </summary>
+        private static void ReadExactly(Stream stream, byte[] buffer, int offset, int count)
+        {
+            int totalRead = 0;
+            while (totalRead < count)
+            {
+                int read = stream.Read(buffer, offset + totalRead, count - totalRead);
+                if (read == 0)
+                {
+                    throw new EndOfStreamException(
+                        $"Expected {count} bytes for the AES initialization vector but the stream ended after {totalRead}.");
+                }
+                totalRead += read;
             }
         }
 

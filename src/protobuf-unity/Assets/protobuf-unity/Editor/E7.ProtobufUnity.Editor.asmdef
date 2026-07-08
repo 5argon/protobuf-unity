@@ -1,7 +1,6 @@
 {
     "name": "E7.ProtobufUnity.Editor",
     "references": [],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],

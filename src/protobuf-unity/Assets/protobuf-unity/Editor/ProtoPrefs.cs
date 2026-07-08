@@ -90,7 +90,6 @@ namespace E7.Protobuf
             }
         }
 
-#if UNITY_2018_3_OR_NEWER
         internal class ProtobufUnitySettingsProvider : SettingsProvider
         {
             public ProtobufUnitySettingsProvider(string path, SettingsScope scope = SettingsScope.User)
@@ -108,9 +107,7 @@ namespace E7.Protobuf
                 return new ProtobufUnitySettingsProvider("Preferences/Protobuf");
             }
         }
-#else
-        [PreferenceItem("Protobuf")]
-#endif
+
         static void ProtobufPreference()
         {
             EditorGUI.BeginChangeCheck();

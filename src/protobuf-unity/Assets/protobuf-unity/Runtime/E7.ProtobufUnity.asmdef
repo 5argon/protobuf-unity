@@ -1,7 +1,6 @@
 {
     "name": "E7.ProtobufUnity",
     "references": [],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

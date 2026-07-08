@@ -48,9 +48,10 @@ namespace E7.Protobuf
                 return;
             }
 
+            string[] includePaths = IncludePaths;
             foreach (string str in importedAssets)
             {
-                if (CompileProtobufAssetPath(str, IncludePaths) == true)
+                if (CompileProtobufAssetPath(str, includePaths) == true)
                 {
                     anyChanges = true;
                 }
@@ -80,13 +81,14 @@ namespace E7.Protobuf
                 UnityEngine.Debug.Log("Protobuf Unity : Compiling all .proto files in the project...");
             }
 
+            string[] includePaths = IncludePaths;
             foreach (string s in AllProtoFiles)
             {
                 if (ProtoPrefs.logStandard)
                 {
                     UnityEngine.Debug.Log("Protobuf Unity : Compiling " + s);
                 }
-                CompileProtobufSystemPath(s, IncludePaths);
+                CompileProtobufSystemPath(s, includePaths);
             }
             UnityEngine.Debug.Log(nameof(ProtobufUnityCompiler));
             AssetDatabase.Refresh();
@@ -113,8 +115,8 @@ namespace E7.Protobuf
                     options += string.Format(" --proto_path \"{0}\" ", s);
                 }
 
-                // Checking if the user has set valid path (there is probably a better way)
-                if (ProtoPrefs.grpcPath != "ProtobufUnity_GrpcPath" && ProtoPrefs.grpcPath != string.Empty)
+                // Only add gRPC options when the user has actually set a plugin path.
+                if (!string.IsNullOrEmpty(ProtoPrefs.grpcPath))
                     options += $" --grpc_out={outputPath} --plugin=protoc-gen-grpc={ProtoPrefs.grpcPath}";
                 //string combinedPath = string.Join(" ", optionFiles.Concat(new string[] { protoFileSystemPath }));
 

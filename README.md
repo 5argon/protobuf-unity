@@ -6,8 +6,14 @@ Do you want to integrate [protobuf](https://github.com/google/protobuf) as a dat
 
 # Installation 
 
-1. Install `protoc` on the machine. This plugin does not include `protoc` command and will try to run it from your command line (via .NET `System.Diagnostics.Process.Start`). Please see https://github.com/google/protobuf and install it. Confirm with `protoc --version` in your command prompt/terminal. Note that the version of `protoc` you use will depend on how high the C# [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) library you want to use because `protoc` may generate code that is not usable with older C# library. Later on this.
-2. Put files in your Unity project. This is also Unity Package Manager compatible. You can pull from online to your project directly.
+1. Install `protoc` on the machine. This plugin does not include `protoc` command and will try to run it from your command line (via .NET `System.Diagnostics.Process.Start`). Please see https://github.com/protocolbuffers/protobuf and install it. Confirm with `protoc --version` in your command prompt/terminal. Note that the version of `protoc` you use will depend on how high the C# [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) library you want to use because `protoc` may generate code that is not usable with older C# library. Later on this.
+2. Add the package to your Unity project. It is Unity Package Manager compatible, so in **Window > Package Manager > + > Add package from git URL** paste:
+
+   ```
+   https://github.com/5argon/protobuf-unity.git?path=src/protobuf-unity/Assets/protobuf-unity
+   ```
+
+   (The `?path=` points at the innermost package folder in this repo's [UniTask-style](https://github.com/Cysharp/UniTask) layout. You can also clone and open `src/protobuf-unity` directly as a Unity project to develop the package itself.)
 3. You can access the settings in Preferences > Protobuf. Here you *need* to put a path to your `protoc` executable.
 
 ![settings](.Documentation/images/settings.png)
@@ -48,7 +54,7 @@ Leave empty or like it is if you don't want to use gRPC
 
 1. When you write a `.proto` file normally you need to use the `protoc` command line to generate C# classes. This plugin automatically find all your `.proto` files in your Unity project, generate them all, and output respective class file at the same place as the `.proto` file. It automatically regenerate when you change any `.proto` file. If there is an error the plugin will report via the Console. 
 
-2. You could use `import` statement in your `.proto` file, which normally looks for all files in `--proto_path` folders input to the command line. (You cannot use relative path such as `../` in `import`) With protobuf-unity, `--proto_path` will be all parent folders of all `.proto` file in your Unity project *combined*. This way you can use `import` to refer to any `.proto` file within your Unity project. (They should not be in UPM package though, I used `Application.dataPath` as a path base and packages aren't in here.) Also, `google/protobuf/` path is usable. For example, utilizing [well-known types](https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/unittest_well_known_types.proto) or extending [custom options](https://developers.google.com/protocol-buffers/docs/proto#customoptions).
+2. You could use `import` statement in your `.proto` file, which normally looks for all files in `--proto_path` folders input to the command line. (You cannot use relative path such as `../` in `import`) With protobuf-unity, `--proto_path` will be all parent folders of all `.proto` file in your Unity project *combined*. This way you can use `import` to refer to any `.proto` file within your Unity project. (They should not be in UPM package though, I used `Application.dataPath` as a path base and packages aren't in here.) Also, `google/protobuf/` path is usable. For example, utilizing [well-known types](https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/unittest_well_known_types.proto) or extending [custom options](https://protobuf.dev/programming-guides/proto2/#customoptions).
 
 ## How to use Google-made well known types
 
@@ -68,12 +74,12 @@ Resulting C# class looks like this :
 
 ![wellknowntypes2](.Documentation/images/wellknown2.png)
 
-See other predefined [well-known types](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf). You will see other types already used for typical data types such as `uint32` as well. Other useful one are [`google.Protobuf.Struct`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#struct) where it could store JSON-like key value pair where the key is string and value is varying type. Use [`google.Protobuf.Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Value) for only the varying value type part of the `Struct`. I think generally when you think you are going to use `google.Protobuf.Any`, think of `Struct` first. (Unless it is really a byte stream.)
+See other predefined [well-known types](https://protobuf.dev/reference/protobuf/google.protobuf/). You will see other types already used for typical data types such as `uint32` as well. Other useful one are [`google.Protobuf.Struct`](https://protobuf.dev/reference/protobuf/google.protobuf/#struct) where it could store JSON-like key value pair where the key is string and value is varying type. Use [`google.Protobuf.Value`](https://protobuf.dev/reference/protobuf/google.protobuf/#value) for only the varying value type part of the `Struct`. I think generally when you think you are going to use `google.Protobuf.Any`, think of `Struct` first. (Unless it is really a byte stream.)
 
 ## Why Protobuf?
 
 - Smaller size, no big luggages like type information when if you used `System.Serializable` + `BinaryFormatter`.
-- You could use Unity's `ScriptableObject`, but one well-known gotchas is that Unity can't serialize `Dictionary`. Here you could use [`map<,>`](https://developers.google.com/protocol-buffers/docs/proto3#maps) in protobuf together with available protobuf types. [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) and [Oneof](https://developers.google.com/protocol-buffers/docs/proto3#oneof) could be very useful too.
+- You could use Unity's `ScriptableObject`, but one well-known gotchas is that Unity can't serialize `Dictionary`. Here you could use [`map<,>`](https://protobuf.dev/programming-guides/proto3/#maps) in protobuf together with available protobuf types. [Any](https://protobuf.dev/programming-guides/proto3/#any) and [Oneof](https://protobuf.dev/programming-guides/proto3/#oneof) could be very useful too.
 - `System.Serializable` is terrible on both forward and backward compatibility unpredictably, may affect your business badly. (e.g. you wanna change how your game's monetization works, that timed ads that was saved in the save file is now unnecessary, but because inflexibility you have to live with them forever in the code.)
 - For Unity-specific problem, just rename your `asmdef` and the serialized file is now unreadable without binder hacks because `BinaryFormatter` needs fully qualified assembly name.
 - Protobuf is flexible that it is a generic C# library, and the serialized file could potentially be read in other languages like on your game server. For more Unity-tuned serialization, you may want to check out [Odin Serializer](https://github.com/TeamSirenix/odin-serializer).
@@ -98,7 +104,7 @@ So it is recommended to get the latest version!
 
 ## Some more notes about Protocol Buffer
 
-For complete understanding I suggest you visit [Google's document](https://developers.google.com/protocol-buffers/docs/overview) but here are some gotchas you might want to know before starting.
+For complete understanding I suggest you visit [Google's document](https://protobuf.dev/overview/) but here are some gotchas you might want to know before starting.
 
 - Use CamelCase (with an initial capital) for message names, for example, SongServerRequest. Use underscore_separated_names for field names – for example, song_name.
 - By default of C# `protoc`, the `underscore_names` will become `PascalCase` and `camelCase` in the generated code.
@@ -110,7 +116,7 @@ For complete understanding I suggest you visit [Google's document](https://devel
 - You cannot use duplicated `enum` name even if they are not in the same type. You may have to prefix your `enum` especially if they sounded generic like `None`.
 - It's not `int` but `int32`. And this data type is not efficient for negative number. (In that case use `sint32`)
 - If you put `//` comment (or multiline) over a field or message definition, it will be transferred nicely to C# comment.
-- It is [possible to generate a C# namespace](https://developers.google.com/protocol-buffers/docs/reference/csharp-generated#structure).
+- It is [possible to generate a C# namespace](https://protobuf.dev/reference/csharp/csharp-generated/#structure).
 - The generated class contains parameterless constructor definition, but you still could interfere and add something more because it call `partial void OnConstruction()`, which has no definition and you can add something to it in your handwritten `partial`. This is C#'s [partial method](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/partial-method) feature that works similar to a `partial` class.
 - One thing to note about the timing of `OnConstruction` though, it is called before any data is populated to the instance. For example, if I got a `repeated` `int32` of highscores, I am thinking about maintaining this list to have exactly 10 scores at any moment. To ensure this I add some logic to fill it with empty scores until it has 10 count in `OnConstruction`. However, I later found that when loading from a save file that already has scores (let's say 10 scores as intended), `OnConstruction` comes before `repeated` list is populated from the stream. My code see it as empty where actually it is going to be populated a bit later. The result is I get 20 scores in the deserialized list.
 
@@ -156,9 +162,9 @@ There are some problems with Protobuf-generated C# code that I am not quite cont
 - Some fields in `proto` like `map` are useful as Unity couldn't even serialize `Dictionary` properly, but it is even more likely than normal fields that you don't want anyone to access this freely and add things to it. Imagine a `map<string,string>` describing friend's UID code to the string representation of `DateTime` of when they last online. It doesn't make sense to allow access to this map because `string` doesn't make sense. You want it completely `private` then write a method accessor like `RememberLastOnline(friend, dateTime)` to modify its value, and potentially call the save method to write to disk at the same time.
 - These unwanted accessors show up in your intellisense and you don't want to see them.
 
-So I want some more control over the generated C# classes. One could utilize the [Compiler Plugin feature](https://developers.google.com/protocol-buffers/docs/reference/other#plugins), but I think it is overkill. I think I am fine with just some dumb RegEx replace over generated C# classes in Unity as a 2nd pass.
+So I want some more control over the generated C# classes. One could utilize the [Compiler Plugin feature](https://protobuf.dev/reference/other/#plugins), but I think it is overkill. I think I am fine with just some dumb RegEx replace over generated C# classes in Unity as a 2nd pass.
 
-The next problem is how to select some fields or message to be triggered by this post-processing. It will be by [custom options feature](https://developers.google.com/protocol-buffers/docs/proto3#custom_options). In the folder `Runtime/CustomOptions`, there is a `protobuf_unity_custom_options.proto` file that extends the options to Protobuf.
+The next problem is how to select some fields or message to be triggered by this post-processing. It will be by [custom options feature](https://protobuf.dev/programming-guides/proto3/#customoptions). In the folder `Runtime/CustomOptions`, there is a `protobuf_unity_custom_options.proto` file that extends the options to Protobuf.
 
 - If you use protobuf-unity by copying the whole thing into your project, it will be in your `import` scope already, plus protobuf-unity will generate its C# counterpart.
 - If you use protobuf-unity via UPM include, I don't want to deal with path resolving to the package location so `protoc` knows where the `protobuf_unity_custom_options.proto` is. A solution is just copy this `.proto` file to your project. protobuf-unity will then generate its C# file again locally in your project. protobuf-unity has an exception that it will not generate C# script for `.proto` coming from packages.
@@ -189,7 +195,7 @@ message PlayerData {
 
 ## JSON at client side
 
-The point of protobuf is often to sent everything over the wire with matching protobuf files waiting. But what if you are not in control of the receiving side? The key is often JSON serialization, since that is kinda the standard of interoperability. And what I just want to tell you is to know that there is a class called [`Google.Protobuf.JsonFormatter`](https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/json-formatter) available for use from Google's dll already.
+The point of protobuf is often to sent everything over the wire with matching protobuf files waiting. But what if you are not in control of the receiving side? The key is often JSON serialization, since that is kinda the standard of interoperability. And what I just want to tell you is to know that there is a class called [`Google.Protobuf.JsonFormatter`](https://protobuf.dev/reference/csharp/api-docs/class/google/protobuf/json-formatter/) available for use from Google's dll already.
 
 How to use it is just instantiate that class instance (or `JsonFormatter.Default` for no config quick formatting) then `.Format(yourProtobufMessageObject)`. It uses a bunch of reflections to make a key value pairs of C# variable name and its value which may not be the most efficient solution, but it did the trick.
 

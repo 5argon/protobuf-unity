@@ -4,11 +4,11 @@ namespace E7.Protobuf
 {
     /// <summary>
     /// (EXPERIMENTAL)
-    /// Your game's side of `partial` may get unwieldly fast when you add more and more accessors. You may
+    /// Your game's side of `partial` may get unwieldy fast when you add more and more accessors. You may
     /// use multiple source files of the same `partial` to organize things out, but still you are locked
     /// to the same class because it is linked with protobuf's serialization and others.
     /// 
-    /// Plus one more problems, all methods shows up together in intellisense. You wish you could categorize them
+    /// Plus one more problems, all methods shows up together in IntelliSense. You wish you could categorize them
     /// while somehow have it able to access all of protobuf-generated properties.
     /// 
     /// With "proto modules", it is just a wrapper class that could access your protobuf data and tell it to save. That's it!

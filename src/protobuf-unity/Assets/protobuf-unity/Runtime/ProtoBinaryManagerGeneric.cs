@@ -1,13 +1,24 @@
 ﻿using Google.Protobuf;
 using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
 namespace E7.Protobuf
 {
+    /// <summary>
+    /// Selects the PBKDF2 hash and the AES key size used to derive the encryption key.
+    /// The default stays on the legacy scheme so existing save files remain readable; picking another
+    /// value changes the derived key, making previously written saves unreadable without a migration.
+    /// </summary>
+    public enum ProtoEncryptionScheme
+    {
+        Sha1Aes128 = 0,
+        Sha256Aes256,
+        Sha512Aes256,
+    }
+
     /// <summary>
     /// This is a manager for dealing with local save file designed from Protobuf.
     /// </summary>
@@ -131,20 +142,29 @@ namespace E7.Protobuf
         /// </remarks>
         protected abstract int EncryptionIteration { get; }
 
+        /// <summary>
+        /// Override to upgrade the key-derivation hash and AES key size.
+        /// </summary>
+        protected virtual ProtoEncryptionScheme EncryptionScheme => ProtoEncryptionScheme.Sha1Aes128;
+
         private Rfc2898DeriveBytes derivator;
         private byte[] key;
 
         public ProtoBinaryManager()
         {
-            //If you use new line in your password or salt string, 
-            //Windows machine could produce different result because it uses \r\n instead of just \n
+            // If you use new line in your password or salt string, 
+            // Windows machine could produce different result because it uses \r\n instead of just \n
             var password = EncryptionPassword.Replace("\r", "");
             var salt = EncryptionSalt.Replace("\r", "");
-            // Debug.Log(string.Join(" ",Encoding.ASCII.GetBytes(password).Select(x => x.ToString("X"))));
-            // Debug.Log(string.Join(" ",Encoding.ASCII.GetBytes(salt).Select(x => x.ToString("X"))));
+            (HashAlgorithmName hash, int keyBytes) = EncryptionScheme switch
+            {
+                ProtoEncryptionScheme.Sha256Aes256 => (HashAlgorithmName.SHA256, 32),
+                ProtoEncryptionScheme.Sha512Aes256 => (HashAlgorithmName.SHA512, 32),
+                _ => (HashAlgorithmName.SHA1, 16),
+            };
             derivator = new Rfc2898DeriveBytes(Encoding.ASCII.GetBytes(password), Encoding.ASCII.GetBytes(salt),
-                EncryptionIteration);
-            key = derivator.GetBytes(16);
+                EncryptionIteration, hash);
+            key = derivator.GetBytes(keyBytes);
         }
 
         private static SELF manager;
@@ -366,7 +386,7 @@ namespace E7.Protobuf
                     return Validation(migrated);
                 }
                 catch (Exception ex2) when (ex2 is CryptographicException || ex2 is ArgumentException ||
-                                            ex is InvalidOperationException)
+                                            ex2 is InvalidOperationException)
                 {
 #if UNITY_EDITOR
                     Debug.LogWarning(ex2);
