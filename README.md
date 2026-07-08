@@ -18,19 +18,24 @@ As soon as you import/reimport/modify (but *not* moving) `.proto` file in your p
 
 The next problem is that your generated classes references external library [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) that you need to also include in the game client so it is able to serialize to Protobuf binary. Not only that, `protobuf-unity` itself also has Runtime assembly which has additional Protobuf toolings. So both your assembly definition (`.asmdef`) that your generated classes resides and this package need `Google.Protobuf` C# library.
 
-It is **not bundled** with this repository. You should download [the Nuget package](https://www.nuget.org/packages/Google.Protobuf) then use archive extract tools to get the .dll out. It contains targets such as .NET 4.6 and .NET Standard 1.0/2.0 which you should choose mathcing your Project Settings.
+It is **not bundled** with this repository. Download [the Nuget package](https://www.nuget.org/packages/Google.Protobuf) (a `.nupkg` is just a zip archive, so extract it with any archive tool) and grab the DLL from inside `lib/`. Pick the target framework that matches your **Api Compatibility Level** in Project Settings:
 
-### Version Problems
+- **.NET Standard 2.1** (the default profile on Unity 2021 LTS and later, including the current LTS): use the `lib/netstandard2.0/Google.Protobuf.dll`.
+- **.NET Framework 4.8** profile: the `lib/net45/Google.Protobuf.dll` also works.
 
-Over the years, this [`Google.Protobuf`](https://www.nuget.org/packages/Google.Protobuf) requires more and more .NET dependencies that ultimately not included in Unity.
+### Dependencies are no longer a problem on modern Unity
 
-For example, if it ask for `System.Memory.dll` because it want to use `Span` class but Unity is not supporting it yet, you may also [downloading it](https://www.nuget.org/packages/System.Memory/) and forcibly put in the project. Now that will also ask for missing references `System.Runtime.CompilerServices.Unsafe` [here](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/) and `System.Buffers` [here](https://www.nuget.org/packages/System.Buffers/).
+Historically `Google.Protobuf` pulled in `System.Memory` (for `Span<T>`), which then dragged in `System.Runtime.CompilerServices.Unsafe` and `System.Buffers`, none of which Unity shipped. You had to hunt those DLLs down and force them into the project, fighting version mismatches along the way.
 
-Note that the reason why these libraries aren't included in Unity is likely that something does not work or partially work but wrong behavior on some platforms that Unity is committing to. So it is best that you don't use anything in these libraries other than satisfying the `Google.Protobuf.dll`, and pray that `Google.Protobuf.dll` itself doesn't use something bad.
+This is fixed on the current LTS. Since Unity 2021 LTS the default Api Compatibility Level is **.NET Standard 2.1**, which bakes `Span<T>`, `Memory<T>`, `System.Buffers`, and `System.Runtime.CompilerServices.Unsafe` directly into the platform BCL. The `netstandard2.0` build of `Google.Protobuf` therefore resolves all of its references against the runtime — **drop in a single `Google.Protobuf.dll` and you are done.** No `System.Memory.dll` or other shim assemblies required.
 
-### Alternate `Google.Protobuf` versions
+This is confirmed upstream: the protobuf issue that requested a dedicated `netstandard2.1` build *specifically for Unity* was closed with *"No longer applicable, later Unity versions work fine with the netstandard 2.0 version"* ([protocolbuffers/protobuf#9240](https://github.com/protocolbuffers/protobuf/issues/9240)).
 
-If you did find problem when forcibly including exotic .NET dll such as `System.Memory.dll`, you may want to downgrade the C# `Google.Protobuf.dll` and the `protoc` to match until it does not require the problematic dependencies anymore. I have listed several breakpoint version where the next one changes its requirement [here](https://github.com/5argon/protobuf-unity/issues/14#issuecomment-922265628).
+The old advice of downgrading `Google.Protobuf.dll` and `protoc` until the exotic dependencies went away is no longer necessary on modern Unity — you can pair a current `protoc` with a current `Google.Protobuf.dll`.
+
+### Looking ahead: CoreCLR / .NET 10
+
+Unity's [Path to CoreCLR](https://discussions.unity.com/t/path-to-coreclr-2026-upgrade-guide/1714279) replaces Mono with CoreCLR on a .NET 10 BCL in Unity 6.8, at which point .NET Standard 2.1 becomes the only exposed target framework. The `netstandard2.0` DLL remains consumable there, but once CoreCLR lands the cleanest option is the dependency-free `lib/net5.0/Google.Protobuf.dll`. In short, the trajectory keeps getting simpler, not harder.
 
 ## Grpc
 
