@@ -41,6 +41,6 @@ To reference the package from your own assembly, the runtime assembly name is `E
 
 Open **Preferences > Protobuf**. Here you *need* to set the path to your `protoc` executable.
 
-![The Protobuf preferences panel](images/settings.png)
+![The Protobuf preferences panel](images/installation-preferences-panel.png)
 
 That's it — edit a `.proto` file and its C# class is generated next to it.
