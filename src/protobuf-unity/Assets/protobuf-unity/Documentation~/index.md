@@ -1,5 +1,5 @@
 <div class="exc7-hero">
-    <img src="images/splash.png" alt="Protobuf Unity">
+    <img src="images/splash.webp" alt="Protobuf Unity">
     <h1 class="exc7-hero-title">Protobuf Unity</h1>
     <p class="exc7-hero-desc">Automatic <code>.proto</code> compilation in Unity to C# as you edit, plus Protobuf utilities made for games.</p>
 </div>

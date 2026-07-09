@@ -25,6 +25,6 @@ For a complete understanding, read [Google's documentation](https://protobuf.dev
 - The generated class has a parameterless constructor, but you can still hook in via `partial void OnConstruction()`, which has no definition — add your own in a handwritten `partial`. This is C#'s [partial method](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/partial-method) feature.
 - Watch the timing of `OnConstruction`: it is called **before** any data is populated. For example, if you have a `repeated int32` of high scores and you use `OnConstruction` to pad the list to 10 entries, then load a save that already has 10 scores, `OnConstruction` runs before the `repeated` list is populated from the stream — so you can end up with 20 entries in the deserialized list.
 
-![A .proto file in the project](images/notes-proto-file-in-project.png)
+![A .proto file in the project](images/notes-proto-file-in-project.webp)
 
-![Comparing a .proto with its generated C# code](images/notes-proto-vs-generated-csharp.png)
+![Comparing a .proto with its generated C# code](images/notes-proto-vs-generated-csharp.webp)

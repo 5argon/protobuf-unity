@@ -8,12 +8,12 @@ Google's `Timestamp` [consists of two number fields](https://github.com/protocol
 
 Here's how you do it in your `.proto` file:
 
-![Importing a well-known type in a .proto file](images/well-known-types-import-proto.png)
+![Importing a well-known type in a .proto file](images/well-known-types-import-proto.webp)
 
 The `google/protobuf/` path is available for `import` seemingly from nowhere. Then you fully qualify it with `google.protobuf.__`, since Google used `package google.protobuf;`.
 
 The resulting C# class looks like this:
 
-![The generated C# class using the well-known type](images/well-known-types-generated-csharp.png)
+![The generated C# class using the well-known type](images/well-known-types-generated-csharp.webp)
 
 See the other predefined [well-known types](https://protobuf.dev/reference/protobuf/google.protobuf/) — you'll find types already used for typical data such as `uint32` as well. Other useful ones include [`google.protobuf.Struct`](https://protobuf.dev/reference/protobuf/google.protobuf/#struct), which stores JSON-like key/value pairs where the key is a string and the value is a varying type, and [`google.protobuf.Value`](https://protobuf.dev/reference/protobuf/google.protobuf/#value) for just the varying-value part of a `Struct`. Generally, when you think you are going to use `google.protobuf.Any`, consider `Struct` first (unless it really is a byte stream).
