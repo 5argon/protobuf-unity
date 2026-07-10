@@ -5,6 +5,10 @@ All notable changes to this package are documented here. This project adheres to
 
 ## [2.0.0]
 
+### Fixed
+
+- The static save-data slot (`Active`) and `Manager` are now reset when entering Play Mode, so the package behaves correctly under Fast Enter Play Mode / no domain reload (default for new projects in Unity 6.6+, and the only option in 6.8). Previously the in-memory active save from a prior Play session would persist instead of reloading from disk. A public `ClearStaticState()` was also added so you can reset it manually (e.g. when returning to a main menu).
+
 ### Changed
 
 - Repository restructured to the UniTask-style layout: the repo root is now a real Unity

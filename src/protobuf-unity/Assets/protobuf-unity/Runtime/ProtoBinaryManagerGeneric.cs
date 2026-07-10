@@ -19,6 +19,16 @@ namespace E7.Protobuf
         Sha512Aes256,
     }
 
+    internal static class ProtoBinaryManagerStaticReset
+    {
+        private static Action resets;
+
+        internal static void Register(Action reset) => resets += reset;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetAll() => resets?.Invoke();
+    }
+
     /// <summary>
     /// This is a manager for dealing with local save file designed from Protobuf.
     /// </summary>
@@ -186,6 +196,17 @@ namespace E7.Protobuf
         }
 
         private static PROTO active;
+
+        public static void ClearStaticState()
+        {
+            active = null;
+            manager = null;
+        }
+
+        static ProtoBinaryManager()
+        {
+            ProtoBinaryManagerStaticReset.Register(ClearStaticState);
+        }
 
         /// <summary>
         /// The manager gives you 1 special loaded in-memory save data slot by loading from the "main save file".
