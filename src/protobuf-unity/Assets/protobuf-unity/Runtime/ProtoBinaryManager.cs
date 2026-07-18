@@ -64,6 +64,9 @@ namespace E7.Protobuf
         public static void StreamToFile(MemoryStream memStream, string saveFolderAbsolute, string fileNameWithExtension)
         {
             //Debug.Log("Saved : " + Application.persistentDataPath);
+            // Make sure the destination folder exists. It normally does (persistentDataPath), but a custom
+            // InnerSaveFolder — or the archive files landing in a subfolder — would otherwise throw.
+            Directory.CreateDirectory(saveFolderAbsolute);
             using (FileStream file = File.Create($"{saveFolderAbsolute}/{fileNameWithExtension}"))
             using (memStream)
             {

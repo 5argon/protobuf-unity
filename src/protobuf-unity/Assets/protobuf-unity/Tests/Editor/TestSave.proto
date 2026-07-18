@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+// A small but representative save schema used by the test assembly.
+//
+// It deliberately imports nothing (no well-known types), so the in-project compiler
+// generates it with no extra include paths — exactly like the schemas in the Samples~
+// folder. The generated TestSave.cs sits next to this file and is committed to the repo
+// so tests do not depend on protoc being installed on the machine running them.
+option csharp_namespace = "E7.Protobuf.Tests";
+
+package e7.protobuf.tests;
+
+message TestSave {
+  int32 level = 1;
+  string player_name = 2;
+  double play_time_seconds = 3;
+
+  // repeated -> IList<string> in the generated C#.
+  repeated string unlocked_ids = 4;
+
+  // map -> IDictionary<string, int> in the generated C#.
+  map<string, int32> inventory = 5;
+
+  message Stats {
+    int32 wins = 1;
+    int32 losses = 2;
+  }
+  Stats stats = 6;
+}

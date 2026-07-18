@@ -1,5 +1,7 @@
 ﻿using Google.Protobuf;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -17,6 +19,41 @@ namespace E7.Protobuf
         Sha1Aes128 = 0,
         Sha256Aes256,
         Sha512Aes256,
+    }
+
+    /// <summary>
+    /// One entry in the rolling archive history produced by
+    /// <see cref="ProtoBinaryManager{PROTO, SELF}.ArchiveActive"/>. Returned from
+    /// <see cref="ProtoBinaryManager{PROTO, SELF}.ListArchives"/> so you can present the available
+    /// snapshots or assert against them in tests.
+    /// </summary>
+    public readonly struct ProtoArchiveInfo
+    {
+        /// <summary>
+        /// The calendar day this archive was written, parsed from its file name's <c>yyyy-MM-dd</c> stamp.
+        /// </summary>
+        public readonly DateTime Date;
+
+        /// <summary>
+        /// The file name without its extension, i.e. the argument you would pass to
+        /// <see cref="ProtoBinaryManager{PROTO, SELF}.Load(string)"/>.
+        /// </summary>
+        public readonly string FileName;
+
+        /// <summary>
+        /// Absolute path to the archive file on disk.
+        /// </summary>
+        public readonly string Path;
+
+        public ProtoArchiveInfo(DateTime date, string fileName, string path)
+        {
+            Date = date;
+            FileName = fileName;
+            Path = path;
+        }
+
+        public override string ToString() =>
+            Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " (" + FileName + ")";
     }
 
     internal static class ProtoBinaryManagerStaticReset
@@ -67,6 +104,39 @@ namespace E7.Protobuf
         /// Appended **before** the usual file name's extension for <see cref="BackupActive"/>.
         /// </summary>
         protected virtual string BackupSuffix => ".backup";
+
+        /// <summary>
+        /// Appended before the date stamp for rolling archive files written by <see cref="ArchiveActive"/>,
+        /// e.g. <c>SaveData.archive.2026-03-14.save</c>. Keep this different from <see cref="BackupSuffix"/>
+        /// so the versioned archives never collide with the single-slot backup.
+        /// </summary>
+        protected virtual string ArchiveSuffix => ".archive";
+
+        /// <summary>
+        /// Minimum spacing, in days, between two archives that are kept side by side.
+        /// Call <see cref="ArchiveActive"/> as often as you like; while the newest archive is younger than
+        /// this it is simply refreshed in place, so 30 keeps roughly one snapshot per month, 7 per week.
+        /// </summary>
+        protected virtual int ArchiveIntervalDays => 30;
+
+        /// <summary>
+        /// How many archives to keep. Once <see cref="ArchiveActive"/> has written a fresh one it prunes the
+        /// oldest beyond this count. A value of <c>0</c> or less means "never prune" (keep every interval forever).
+        /// This never touches the single-slot backup written by <see cref="BackupActive"/>.
+        /// </summary>
+        protected virtual int ArchiveRetentionCount => 6;
+
+        /// <summary>
+        /// The clock used to date-stamp archives and to decide whether an interval has elapsed.
+        /// Defaults to <see cref="DateTime.Now"/>; override it in tests to simulate months passing without waiting.
+        /// </summary>
+        protected virtual DateTime Now => DateTime.Now;
+
+        /// <summary>
+        /// Date format for the archive file name's stamp. ISO <c>yyyy-MM-dd</c> so that a plain lexical sort of
+        /// file names is also a chronological sort, which is what makes listing and pruning cheap and reliable.
+        /// </summary>
+        private const string ArchiveDateFormat = "yyyy-MM-dd";
 
         /// <summary>
         /// A save file associated with <see cref="Active"/> save data slot. This is without extension.
@@ -199,7 +269,7 @@ namespace E7.Protobuf
 
         public static void ClearStaticState()
         {
-            active = null;
+            active = default;
             manager = null;
         }
 
@@ -246,18 +316,170 @@ namespace E7.Protobuf
         /// dig the backup and see if it works or not.
         /// 
         /// Or you could use the built-in <see cref="RestoreFromBackup"/> to replace the active save memory with the backup.
-        /// 
-        /// TODO : Make this method backup incrementally as multiple files, with timestamp.
+        ///
+        /// This is the single-slot backup and stays a single slot on purpose. For a rolling history of
+        /// dated archives that keeps older versions around, use <see cref="ArchiveActive"/> instead.
         /// </remarks>
         public void BackupActive() => Save(active, $"{Manager.MainFileName}{Manager.BackupSuffix}");
 
         /// <summary>
-        /// Reload from the main backup file.
-        /// 
-        /// TODO : When backup could do multiple files, this should use the most recent one.
+        /// Reload from the main (single-slot) backup file written by <see cref="BackupActive"/>.
+        /// For the rolling archives see <see cref="RestoreFromArchive"/>.
         /// </summary>
         public void RestoreFromBackup() =>
             Manager.ApplyToActive(Manager.Load($"{Manager.MainFileName}{Manager.BackupSuffix}"));
+
+        // ------------------------------------------------------------------------------------------
+        // Rolling archives (versioned backups)
+        //
+        // Unlike the single-slot backup above, these leave older snapshots behind so you can recover
+        // a save from weeks or months ago. Each archive is one dated file; call ArchiveActive() as
+        // often as you want and it self-throttles to one snapshot per ArchiveIntervalDays, pruning
+        // anything past ArchiveRetentionCount. The single-slot backup is never affected.
+        // ------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Write the <see cref="Active"/> save into the rolling archive history, then prune old archives
+        /// down to <see cref="ArchiveRetentionCount"/>.
+        /// </summary>
+        /// <remarks>
+        /// Safe to call as often as you like (every launch, every autosave). While the newest archive is
+        /// younger than <see cref="ArchiveIntervalDays"/> this refreshes it in place — so repeated calls
+        /// inside one interval collapse to a single, up-to-date snapshot instead of piling up. Once an
+        /// interval has elapsed the previous archive is frozen and a new dated one is opened, giving you
+        /// "last month's save", "the month before", and so on.
+        ///
+        /// The single-slot backup from <see cref="BackupActive"/> is a completely separate file and is
+        /// never read, written, or pruned by any of the archive methods.
+        /// </remarks>
+        /// <returns>Information about the archive that now holds the active save.</returns>
+        public ProtoArchiveInfo ArchiveActive()
+        {
+            IReadOnlyList<ProtoArchiveInfo> existing = ListArchives();
+            DateTime today = Now.Date;
+
+            if (existing.Count > 0)
+            {
+                ProtoArchiveInfo newest = existing[0];
+                if ((today - newest.Date).TotalDays < ArchiveIntervalDays)
+                {
+                    // Still inside the current interval window: replace the current snapshot in place
+                    // (re-dated to today) rather than leaving a near-duplicate behind.
+                    File.Delete(newest.Path);
+                }
+                // else: the newest archive is at least one full interval old, so leave it frozen forever
+                //       and fall through to open a brand new dated archive next to it.
+            }
+
+            string fileNameWithoutExtension = ArchiveFileName(today);
+            Save(Active, fileNameWithoutExtension);
+
+            if (ArchiveRetentionCount > 0)
+            {
+                PruneArchives(ArchiveRetentionCount);
+            }
+
+            string path = $"{SaveFolderAbsolute}/{fileNameWithoutExtension}{SaveFileExtension}";
+            return new ProtoArchiveInfo(today, fileNameWithoutExtension, path);
+        }
+
+        /// <summary>
+        /// Every archive currently on disk, newest first. Index 0 is the most recent snapshot,
+        /// index 1 is one interval back, and so on — the same ordering <see cref="RestoreFromArchive"/> uses.
+        /// </summary>
+        /// <remarks>
+        /// Handy for building a "restore from a previous save" UI, and for asserting behaviour in tests.
+        /// The single-slot backup is intentionally excluded.
+        /// </remarks>
+        public IReadOnlyList<ProtoArchiveInfo> ListArchives()
+        {
+            var result = new List<ProtoArchiveInfo>();
+            string folder = SaveFolderAbsolute;
+            if (!Directory.Exists(folder))
+            {
+                return result;
+            }
+
+            string prefix = $"{MainFileName}{ArchiveSuffix}.";
+            string extension = SaveFileExtension;
+            foreach (string path in Directory.GetFiles(folder))
+            {
+                string fileName = Path.GetFileName(path);
+                if (!fileName.StartsWith(prefix, StringComparison.Ordinal) ||
+                    !fileName.EndsWith(extension, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                string stamp = fileName.Substring(prefix.Length, fileName.Length - prefix.Length - extension.Length);
+                if (!DateTime.TryParseExact(stamp, ArchiveDateFormat, CultureInfo.InvariantCulture,
+                        DateTimeStyles.None, out DateTime date))
+                {
+                    continue; // ignore anything that merely looks like an archive but has no valid date stamp
+                }
+
+                string nameWithoutExtension = fileName.Substring(0, fileName.Length - extension.Length);
+                result.Add(new ProtoArchiveInfo(date, nameWithoutExtension, path));
+            }
+
+            // Newest first. Break date ties by file name so ordering is deterministic.
+            result.Sort((a, b) =>
+            {
+                int byDate = b.Date.CompareTo(a.Date);
+                return byDate != 0 ? byDate : string.CompareOrdinal(b.FileName, a.FileName);
+            });
+            return result;
+        }
+
+        /// <summary>
+        /// Replace the <see cref="Active"/> save with an archived snapshot from <paramref name="intervalsBack"/>
+        /// intervals ago. <c>0</c> is the most recent archive, <c>1</c> the one before it, and so on.
+        /// </summary>
+        /// <remarks>
+        /// This only changes the in-memory active slot, exactly like <see cref="RestoreFromBackup"/>.
+        /// Call <see cref="Save()"/> afterwards if you want the restored data to become the main save file.
+        /// </remarks>
+        /// <exception cref="FileNotFoundException">There is no archive that far back.</exception>
+        public void RestoreFromArchive(int intervalsBack = 0)
+        {
+            IReadOnlyList<ProtoArchiveInfo> archives = ListArchives();
+            if (intervalsBack < 0 || intervalsBack >= archives.Count)
+            {
+                throw new FileNotFoundException(
+                    $"No archive {intervalsBack} interval(s) back; there are only {archives.Count} archive(s).");
+            }
+
+            ApplyToActive(Load(archives[intervalsBack].FileName));
+        }
+
+        /// <summary>
+        /// Delete every archive except the newest <paramref name="keepCount"/>. This is the "prune to the last
+        /// N intervals" operation; it never touches the single-slot backup.
+        /// </summary>
+        /// <param name="keepCount">How many of the most recent archives to keep. <c>0</c> or less removes them all.</param>
+        /// <returns>The number of archive files deleted.</returns>
+        public int PruneArchives(int keepCount)
+        {
+            IReadOnlyList<ProtoArchiveInfo> archives = ListArchives();
+            int keep = Math.Max(0, keepCount);
+            int deleted = 0;
+            for (int i = keep; i < archives.Count; i++)
+            {
+                File.Delete(archives[i].Path);
+                deleted++;
+            }
+
+            return deleted;
+        }
+
+        /// <summary>
+        /// Delete all archives. The single-slot backup from <see cref="BackupActive"/> is left untouched.
+        /// </summary>
+        /// <returns>The number of archive files deleted.</returns>
+        public int ClearArchives() => PruneArchives(0);
+
+        private string ArchiveFileName(DateTime date) =>
+            $"{MainFileName}{ArchiveSuffix}.{date.ToString(ArchiveDateFormat, CultureInfo.InvariantCulture)}";
 
         /// <summary>
         /// Reload main save file into <see cref="Active"/> slot, discarding all unsaved changes.

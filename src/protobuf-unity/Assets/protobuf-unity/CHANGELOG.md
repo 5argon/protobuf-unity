@@ -22,6 +22,15 @@ All notable changes to this package are documented here. This project adheres to
 
 ### Added
 
+- Rolling archives (versioned backups) on `ProtoBinaryManager`, alongside the existing single-slot
+  backup which is unchanged. `ArchiveActive()` writes the active save into a dated archive file
+  (`SaveData.archive.2026-03-14.save`), self-throttling to one snapshot per `ArchiveIntervalDays`
+  (call it as often as you like) and pruning to `ArchiveRetentionCount`. Round it out with
+  `ListArchives()` (newest first), `RestoreFromArchive(intervalsBack)`, `PruneArchives(keepCount)`
+  and `ClearArchives()`. The archive methods never touch the single-slot backup. The interval,
+  retention, archive suffix, and the clock (`Now`) are all overridable `protected virtual` members.
+- Edit-mode test assembly `E7.ProtobufUnity.Tests` covering the whole save API and the archive
+  logic, with a committed `TestSave.proto` and its generated C#.
 - Importable samples: **Save Data Schema**, **gRPC Service**, and **Split Compilation**.
 - Per-folder C# output options asset (**Create > Protobuf Unity > C# Output Options**), so
   different folders can compile with different `--csharp_opt` settings.
