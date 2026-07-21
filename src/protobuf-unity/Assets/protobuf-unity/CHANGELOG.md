@@ -5,6 +5,19 @@ All notable changes to this package are documented here. This project adheres to
 
 ## [2.0.0]
 
+### Added
+
+- A read-only protobuf viewer for the editor, driven entirely by a message's runtime
+  `MessageDescriptor` — no per-type code. `ProtobufViewerWindow.Show(IMessage)` opens a dockable
+  window; `ProtobufFacadeInspector.Build(IMessage)` returns the same view as a `VisualElement` you can
+  host anywhere. It renders any deserialized message as a three-column tree table (Field / Type /
+  Value) via `MultiColumnTreeView`: the Field column expands, the Type column names the protobuf type
+  (`int32`, `string`, an enum/message name, `repeated …`, `map<…>`), and the aligned Value column is
+  colour-coded by type (bool, number, string, enum, bytes) with enums resolved to their names and
+  bytes previewed as base64. A toolbar adds live search-filtering (matches keep their ancestors),
+  expand/collapse, and Copy JSON; every column is sortable. The viewer only inspects a message you
+  already hold, so it stays independent of loading, decryption, and the plain-model layer.
+
 ### Fixed
 
 - The static save-data slot (`Active`) and `Manager` are now reset when entering Play Mode, so the package behaves correctly under Fast Enter Play Mode / no domain reload (default for new projects in Unity 6.6+, and the only option in 6.8). Previously the in-memory active save from a prior Play session would persist instead of reloading from disk. A public `ClearStaticState()` was also added so you can reset it manually (e.g. when returning to a main menu).
