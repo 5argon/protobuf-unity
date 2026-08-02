@@ -7,6 +7,17 @@ All notable changes to this package are documented here. This project adheres to
 
 ### Added
 
+- `System.Runtime.CompilerServices.Unsafe` 4.0.4.1 is bundled beside `Google.Protobuf` in `Plugin/`.
+  The bundled `netstandard2.0` runtime references it by name, Unity ships nothing under that name,
+  and without it a project on **.NET Standard 2.1** fails at runtime the first time it serializes a
+  message carrying a non-empty string. The documentation previously stated this was unnecessary,
+  which held only on .NET Framework, where Mono's `net_4_x` profile supplies its own copy.
+
+  Its two sibling references, `System.Memory` and `System.Buffers`, are deliberately *not* bundled.
+  Unity already satisfies both — Mono at 4.0.99.0, and the netstandard compat shims that player
+  builds resolve against at 4.0.2.0 and 4.0.3.0 — so a bundled copy would be one more assembly to
+  keep in step for no benefit.
+
 - A read-only protobuf viewer for the editor, driven entirely by a message's runtime
   `MessageDescriptor` — no per-type code. `ProtobufViewerWindow.Show(IMessage)` opens a dockable
   window; `ProtobufFacadeInspector.Build(IMessage)` returns the same view as a `VisualElement` you can
