@@ -14,6 +14,10 @@
 !/src/protobuf-unity/Packages/**
 !/src/protobuf-unity/ProjectSettings/**
 
+# Per-machine editor state, not project configuration.
+/src/protobuf-unity/ProjectSettings/PackageManagerSettings.asset
+/src/protobuf-unity/ProjectSettings/SceneTemplateSettings.json
+
 # Ignore .meta only when its asset is also ignored.
 !**/[Aa]ssets/**/*.meta
 
