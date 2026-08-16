@@ -3,6 +3,7 @@
     "author": "Sirawat Pitaksarit/5argon - Exceed7 Experiments",
     "displayName": "Protobuf Unity",
     "version": "2.0.0",
+    "license": "MIT",
     "unity": "6000.3",
     "description": "Automatic .proto files compilation in Unity project to C# as you edit them, plus other Protobuf utilities related to Unity.",
     "samples": [
